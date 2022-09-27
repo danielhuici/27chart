@@ -154,12 +154,12 @@ if len(sys.argv) > 1 and sys.argv[1] == SETUP_FLAG:
 
     logger.info("Setup finished")
 else:
-    #sheduler = BlockingScheduler(timezone="Europe/Madrid")
-    #sheduler.add_job(track_playlist_changes, 'interval', hours=1)
-    #sheduler.add_job(download_songs, 'interval', hours=1)
-    #sheduler.add_job(check_songs_availability, 'interval', hours=24)
-    #sheduler.add_job(backup_db, 'interval', hours=24)
-    #sheduler.start()
-    backup_db()
+    sheduler = BlockingScheduler(timezone="Europe/Madrid")
+    sheduler.add_job(track_playlist_changes, 'interval', hours=1)
+    sheduler.add_job(download_songs, 'interval', hours=1)
+    sheduler.add_job(check_songs_availability, 'interval', hours=24)
+    sheduler.add_job(backup_db, 'interval', hours=24)
+    sheduler.start()
+    
 
 
