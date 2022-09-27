@@ -4,7 +4,7 @@ import sqlite3
 from playlist import Playlist
 from song import Song
 
-DB_NAME = "kifixo27chart"
+DB_NAME = "27chart"
 SQL_TABLE_PLAYLIST = """CREATE TABLE playlists (
          "id"            TEXT PRIMARY KEY NOT NULL,
          "title"         TEXT NOT NULL);
