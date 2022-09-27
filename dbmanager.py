@@ -4,6 +4,7 @@ import sqlite3
 from playlist import Playlist
 from song import Song
 
+DB_NAME = "kifixo27chart"
 SQL_TABLE_PLAYLIST = """CREATE TABLE playlists (
          "id"            TEXT PRIMARY KEY NOT NULL,
          "title"         TEXT NOT NULL);
@@ -32,7 +33,8 @@ SQL_SET_SONG_FILENAME = "UPDATE songs SET filename = ? WHERE id = ?"
 
 class DBManager():
     def __init__(self):
-        self.connection = sqlite3.connect("kifixo27chart.db")
+        self.db_name = DB_NAME
+        self.connection = sqlite3.connect(DB_NAME)
         logging.debug("Opened database successfully")
 
     def create_tables(self):

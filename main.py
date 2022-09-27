@@ -138,6 +138,9 @@ def track_playlist_changes():
         elif playlist.title == SALEN_LISTA_NAME or playlist.title == SALEN_LISTA_2_NAME:
             handle_salen_de_la_lista(playlist)
 
+def backup_db():
+    gdriveManager.upload_file(dbManager.db_name + ".db")
+
 
 if len(sys.argv) > 1 and sys.argv[1] == SETUP_FLAG:
     logger.info("Setting up database...")
@@ -151,10 +154,12 @@ if len(sys.argv) > 1 and sys.argv[1] == SETUP_FLAG:
 
     logger.info("Setup finished")
 else:
-    sheduler = BlockingScheduler(timezone="Europe/Madrid")
-    sheduler.add_job(track_playlist_changes, 'interval', hours=1)
-    sheduler.add_job(download_songs, 'interval', hours=1)
-    sheduler.add_job(check_songs_availability, 'interval', hours=24)
-    sheduler.start()
+    #sheduler = BlockingScheduler(timezone="Europe/Madrid")
+    #sheduler.add_job(track_playlist_changes, 'interval', hours=1)
+    #sheduler.add_job(download_songs, 'interval', hours=1)
+    #sheduler.add_job(check_songs_availability, 'interval', hours=24)
+    #sheduler.add_job(backup_db, 'interval', hours=24)
+    #sheduler.start()
+    backup_db()
 
 
