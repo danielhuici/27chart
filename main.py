@@ -10,11 +10,8 @@ from dbmanager import DBManager
 from twittermanager import TwitterManager
 from gdrivemanager import GDriveManager
 from song import Song
-from apscheduler.schedulers.blocking import BlockingScheduler
 
-
-
-SETUP_FLAG = "--setup"
+ONE_HOUR = 3600
 KIFIXO_27_CHART_NAME = "Kifixo 27 Chart"
 KIFIXO_TOP_EVER_MUSIC_NAME = "Kifixo TOP-Ever Music"
 KIFIXO_GRAND_RESERVA_NAME = "Kifixo Grand Reserva"
@@ -115,7 +112,8 @@ def download_songs():
 def database_exists():
     for file in os.listdir("."):
         if file == dbManager.db_name:
-            return True
+            if os.stat(file).st_size != 0:
+                return True
     return False
 
 def find_song_file():
@@ -148,7 +146,7 @@ def backup_db():
     gdriveManager.upload_file(dbManager.db_name)
 
 
-if database_exists():
+if not database_exists():
     logger.info("Setting up database...")
     dbManager.create_tables()
     playlists = dbManager.get_playlists()
@@ -158,15 +156,20 @@ if database_exists():
         for video in p.videos:
             dbManager.insert_video_playlist(Song(video.video_id, video.title, ""), playlist)
 
+    download_songs()
     logger.info("Setup finished")
 
-sheduler = BlockingScheduler(timezone="Europe/Madrid")
-sheduler.add_job(track_playlist_changes, 'interval', hours=1)
-sheduler.add_job(download_songs, 'interval', hours=1)
-sheduler.add_job(check_songs_availability, 'interval', hours=24)
-sheduler.add_job(backup_db, 'interval', hours=24)
-logger.info("App running")
-sheduler.start()
-    
+n_hours = 24
+while True:
+    track_playlist_changes()
+    download_songs()
+    if n_hours == 24:
+        n_hours = 0
+        check_songs_availability()
+        backup_db()
+    n_hours += 1
+    sleep(ONE_HOUR)
+
+
 
 
