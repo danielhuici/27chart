@@ -42,10 +42,10 @@ class DBManager():
         self.connection.cursor().execute(SQL_TABLE_PLAYLIST)
         self.connection.cursor().execute(SQL_TABLE_PLAYLIST_SONG)
         self.insert_playlist("PLaJq2Gw03Eii0OIzVxV62AISH1A9xOfWw", "Kifixo 27 Chart")
-        #self.insert_playlist("PLaJq2Gw03EijUkrVadSIA9Gxll7ewZ4oY", "Kifixo TOP-Ever Music")
-        #self.insert_playlist("PLaJq2Gw03EiiuyuyumGeqYeR6FBz3jRyG", "Kifixo Grand Reserva")
-        #self.insert_playlist("PLaJq2Gw03Eig3nRIkMQpi2XgfEoJe6S0G", "Salen de la lista")
-        #self.insert_playlist("PLaJq2Gw03Eigv6RQqXKmUP8lPO3IoXbEl", "Salen de la lista 2")
+        self.insert_playlist("PLaJq2Gw03EijUkrVadSIA9Gxll7ewZ4oY", "Kifixo TOP-Ever Music")
+        self.insert_playlist("PLaJq2Gw03EiiuyuyumGeqYeR6FBz3jRyG", "Kifixo Grand Reserva")
+        self.insert_playlist("PLaJq2Gw03Eig3nRIkMQpi2XgfEoJe6S0G", "Salen de la lista")
+        self.insert_playlist("PLaJq2Gw03Eigv6RQqXKmUP8lPO3IoXbEl", "Salen de la lista 2")
 
     def get_playlists(self):
         cursor = self.connection.cursor().execute(SQL_GET_PLAYLISTS)
