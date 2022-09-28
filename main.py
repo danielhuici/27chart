@@ -112,6 +112,12 @@ def download_songs():
         gdriveManager.upload_file(filename)
         os.remove(filename)
 
+def database_exists():
+    for file in os.listdir("."):
+        if file == dbManager.db_name:
+            return True
+    return False
+
 def find_song_file():
     for file in os.listdir("."):
         if file.endswith(FILE_EXTENSION):
@@ -139,10 +145,10 @@ def track_playlist_changes():
             handle_salen_de_la_lista(playlist)
 
 def backup_db():
-    gdriveManager.upload_file(dbManager.db_name + ".db")
+    gdriveManager.upload_file(dbManager.db_name)
 
 
-if len(sys.argv) > 1 and sys.argv[1] == SETUP_FLAG:
+if database_exists():
     logger.info("Setting up database...")
     dbManager.create_tables()
     playlists = dbManager.get_playlists()
@@ -153,13 +159,14 @@ if len(sys.argv) > 1 and sys.argv[1] == SETUP_FLAG:
             dbManager.insert_video_playlist(Song(video.video_id, video.title, ""), playlist)
 
     logger.info("Setup finished")
-else:
-    sheduler = BlockingScheduler(timezone="Europe/Madrid")
-    sheduler.add_job(track_playlist_changes, 'interval', hours=1)
-    sheduler.add_job(download_songs, 'interval', hours=1)
-    sheduler.add_job(check_songs_availability, 'interval', hours=24)
-    sheduler.add_job(backup_db, 'interval', hours=24)
-    sheduler.start()
+
+sheduler = BlockingScheduler(timezone="Europe/Madrid")
+sheduler.add_job(track_playlist_changes, 'interval', hours=1)
+sheduler.add_job(download_songs, 'interval', hours=1)
+sheduler.add_job(check_songs_availability, 'interval', hours=24)
+sheduler.add_job(backup_db, 'interval', hours=24)
+logger.info("App running")
+sheduler.start()
     
 
 
