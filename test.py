@@ -1,5 +1,8 @@
-from tube_dl import Playlist, Youtube
-pl = Playlist('https://music.youtube.com/playlist?list=PLTy__vzNAW6C6sqmp6ddhsuaLsodKDEt_').videos
-for i in pl:
-    yt = Youtube(f'https://youtube.com/watch?v={i}')
-    #yt.formats.first().download()
+from pytube import Playlist, YouTube
+
+
+p = Playlist('https://www.youtube.com/playlist?list=PLaJq2Gw03EigZ484uySxuX1O_0aPBg4Yx')
+print(str(len(list(p.videos))))
+
+#yt = YouTube('https://www.youtube.com/watch?v=DrcsC05YgFw')
+#print(yt.description)

@@ -1,11 +1,10 @@
-import dbm
-from gettext import find
+from __future__ import unicode_literals
 import logging
 import os
-import sys
 from sqlite3 import connect
 from time import sleep
 from pytube import Playlist, YouTube, exceptions
+from yt_dlp import YoutubeDL
 from dbmanager import DBManager
 from twittermanager import TwitterManager
 from gdrivemanager import GDriveManager
@@ -26,7 +25,7 @@ KIFIXO_GRAND_RESERVA_NEW_SONG_TWEET = "\U00002B50 Congratulations \U00002B50 \n 
 SONG_BECAME_UNAVAILABLE_TWEET = "\U00002757 Una canción ya no está disponible @kifixo23 \U00002757 \n {} \n"
 YOUTUBE_PLAYLIST_URL = "https://www.youtube.com/playlist?list="
 YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v="
-FILE_EXTENSION = ".mp4"
+FILE_EXTENSION = ".mp3"
 
 
 logger = logging.getLogger(__name__)
@@ -48,7 +47,7 @@ def find_playlist_changes(db_list, yt_list):
     return db_list_aux, yt_list_aux
 
 # Handle Kifixo27Chart, Kifixo Grand Reserva & Kifixo TOP-Ever Music playlists
-def handle_main_lists(db_playlist):
+def handle_lists(db_playlist):
     added_song_tweet = ""
     retired_song_tweet = ""
     if db_playlist.title == KIFIXO_27_CHART_NAME:
@@ -67,24 +66,16 @@ def handle_main_lists(db_playlist):
 
     for song in retired_songs:
         dbManager.deattach_playlist_song(song, db_playlist)
-        tweet = retired_song_tweet.format(song.title, song.id)
-        twitterManager.postTweet(tweet)
+        if db_playlist.twitter_alert: 
+            tweet = retired_song_tweet.format(song.title, song.id)
+            twitterManager.postTweet(tweet)
 
     for song in added_songs:
         s = Song(song.video_id, song.title, "")
         dbManager.insert_video_playlist(s, db_playlist)
-        tweet = added_song_tweet.format(s.title, s.id)
-        twitterManager.postTweet(tweet)
-
-def handle_salen_de_la_lista(db_playlist):
-    p = Playlist(f'{YOUTUBE_PLAYLIST_URL}{db_playlist.id}')
-
-    retired_songs, added_songs = find_playlist_changes(db_playlist, p.videos)
-    for song in retired_songs:
-        dbManager.deattach_playlist_song(song, db_playlist)
-
-    for song in added_songs:
-        dbManager.insert_video_playlist(song, db_playlist)
+        if db_playlist.twitter_alert: 
+            tweet = added_song_tweet.format(s.title, s.id)
+            twitterManager.postTweet(tweet)
 
 def check_songs_availability():
     songs = dbManager.get_all_songs()
@@ -96,13 +87,21 @@ def check_songs_availability():
             twitterManager.postTweet(tweet)
 
 def download_song(song):
-    video = YouTube(YOUTUBE_VIDEO_URL + song.id)
-    video.streams.filter(only_audio=True).first().download()
-    
-
+    ydl_opts = {
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    }
+    with YoutubeDL(ydl_opts) as ydl:
+        ydl.download(YOUTUBE_VIDEO_URL + song.id)
+        
 def download_songs():
     uncommited_songs = find_uncommited_songs()
     for song in uncommited_songs:
+        logger.info("Downloading song " + song.title)
         download_song(song)
         filename = find_song_file()
         dbManager.set_filename(song.id, filename)
@@ -138,13 +137,14 @@ def track_playlist_changes():
     for playlist in playlists:
         logger.info(f"Scanning playlist {playlist.title}...")
         if playlist.title == KIFIXO_27_CHART_NAME or playlist.title == KIFIXO_TOP_EVER_MUSIC_NAME or playlist.title == KIFIXO_GRAND_RESERVA_NAME:
-            handle_main_lists(playlist)
-        elif playlist.title == SALEN_LISTA_NAME or playlist.title == SALEN_LISTA_2_NAME:
-            handle_salen_de_la_lista(playlist)
+            handle_lists(playlist)
+        
 
 def backup_db():
     gdriveManager.upload_file(dbManager.db_name)
 
+
+### BEGIN ###
 
 if not database_exists():
     logger.info("Setting up database...")

@@ -7,7 +7,8 @@ from song import Song
 DB_NAME = "27chart.db"
 SQL_TABLE_PLAYLIST = """CREATE TABLE playlists (
          "id"            TEXT PRIMARY KEY NOT NULL,
-         "title"         TEXT NOT NULL);
+         "title"         TEXT NOT NULL,
+         "twitter_alert" INTEGER NOT NULL);
 """
 
 SQL_TABLE_MUSIC = """CREATE TABLE songs (
@@ -22,7 +23,7 @@ SQL_TABLE_PLAYLIST_SONG = """CREATE TABLE "playlist_song" (
           "song_id"      INT REFERENCES songs(id));
 """
 
-SQL_GET_PLAYLISTS = "SELECT id, title FROM playlists"
+SQL_GET_PLAYLISTS = "SELECT * FROM playlists"
 SQL_GET_ALL_SONGS = "SELECT * FROM songs"
 SQL_GET_MUSIC_PLAYLIST = "SELECT * FROM songs WHERE id IN (SELECT song_id FROM playlist_song WHERE playlist_id = ?)"
 SQL_INSERT_PLAYLIST = "INSERT INTO playlists (id, title) VALUES (?, ?)"
@@ -41,16 +42,17 @@ class DBManager():
         self.connection.cursor().execute(SQL_TABLE_MUSIC)
         self.connection.cursor().execute(SQL_TABLE_PLAYLIST)
         self.connection.cursor().execute(SQL_TABLE_PLAYLIST_SONG)
-        self.insert_playlist("PLaJq2Gw03Eii0OIzVxV62AISH1A9xOfWw", "Kifixo 27 Chart")
-        self.insert_playlist("PLaJq2Gw03EijUkrVadSIA9Gxll7ewZ4oY", "Kifixo TOP-Ever Music")
-        self.insert_playlist("PLaJq2Gw03EiiuyuyumGeqYeR6FBz3jRyG", "Kifixo Grand Reserva")
-        self.insert_playlist("PLaJq2Gw03Eig3nRIkMQpi2XgfEoJe6S0G", "Salen de la lista")
-        self.insert_playlist("PLaJq2Gw03Eigv6RQqXKmUP8lPO3IoXbEl", "Salen de la lista 2")
+        self.insert_playlist("PLaJq2Gw03Eii0OIzVxV62AISH1A9xOfWw", "Kifixo 27 Chart", 1)
+        self.insert_playlist("PLaJq2Gw03EijUkrVadSIA9Gxll7ewZ4oY", "Kifixo TOP-Ever Music", 1)
+        self.insert_playlist("PLaJq2Gw03EiiuyuyumGeqYeR6FBz3jRyG", "Kifixo Grand Reserva", 1)
+        self.insert_playlist("PLaJq2Gw03Eig3nRIkMQpi2XgfEoJe6S0G", "Salen de la lista", 0)
+        self.insert_playlist("PLaJq2Gw03Eigv6RQqXKmUP8lPO3IoXbEl", "Salen de la lista 2", 0)
 
     def get_playlists(self):
         cursor = self.connection.cursor().execute(SQL_GET_PLAYLISTS)
         playlists = []
         for row in cursor.fetchall():
+            print(row)
             p = Playlist(*row)
             p.songs = self.get_music_playlist(p.id)
             playlists.append(p)
