@@ -22,7 +22,7 @@ KIFIXO_TOP_EVER_DELETED_SONG_TWEET = "\U0001F51D \U0000274C SALIDA DE #KifixoTop
 KIFIXO_TOP_EVER_NEW_SONG_TWEET = "\U0001F51D \U00002705 ENTRADA EN #KifixoTopEverMusic \n {} \n youtu.be/{}"
 KIFIXO_GRAND_RESERVA_DELETED_SONG_TWEET = "\U0001F7E1 THANK YOU \U0001F7E1 \n Salida #KifixoGrandReserva y revelada para Kifixo 27 Chart \n {} \n youtu.be/{}"
 KIFIXO_GRAND_RESERVA_NEW_SONG_TWEET = "\U00002B50 Congratulations \U00002B50 \n ENTRADA A #KifixoGrandReserva Y CANDIDATA A #KifixoSong2023 \n {} \n youtu.be/{}"
-SONG_BECAME_UNAVAILABLE_TWEET = "\U00002757 Una canción ya no está disponible @kifixo23 \U00002757 \n {} \n"
+SONG_BECAME_UNAVAILABLE_TWEET = "\U00002757 Una canción ya no está disponible @kifixo23 \U00002757 \n {} youtu.be/{}\n"
 YOUTUBE_PLAYLIST_URL = "https://www.youtube.com/playlist?list="
 YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v="
 FILE_EXTENSION = ".mp3"
@@ -83,7 +83,7 @@ def check_songs_availability():
         try:
             YouTube(YOUTUBE_VIDEO_URL + song.id).check_availability()
         except exceptions.VideoUnavailable:
-            tweet = SONG_BECAME_UNAVAILABLE_TWEET.format(song.title, song.video_id)
+            tweet = SONG_BECAME_UNAVAILABLE_TWEET.format(song.title, song.id)
             twitterManager.postTweet(tweet)
 
 def download_song(song):
