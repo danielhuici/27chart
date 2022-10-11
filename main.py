@@ -27,12 +27,11 @@ YOUTUBE_PLAYLIST_URL = "https://www.youtube.com/playlist?list="
 YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v="
 FILE_EXTENSION = ".mp3"
 
-
-logger = logging.getLogger(__name__)
-logger.basicConfig(
+logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger(__name__)
 dbManager = DBManager()
 twitterManager = TwitterManager(logger)
 gdriveManager = GDriveManager()
@@ -65,7 +64,7 @@ def handle_lists(db_playlist):
 
     p = Playlist(f'{YOUTUBE_PLAYLIST_URL}{db_playlist.id}')
     retired_songs, added_songs = find_playlist_changes(db_playlist.songs, p.videos)
-    logger.info(str(len(retired_songs)) + " " + str(len(added_songs)))
+    logger.info("Retired songs: " + str(len(retired_songs)) + " New songs: " + str(len(added_songs)))
 
     for song in retired_songs:
         dbManager.deattach_playlist_song(song, db_playlist)
