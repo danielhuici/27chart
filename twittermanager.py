@@ -15,6 +15,9 @@ class TwitterManager:
             self.config = yaml.safe_load(file)
 
     def postTweet(self, text):
-        self.logger.info(f"[TwitterManager] Sending tweet: {text}")
-        self.api.update_status(text)
+        try:
+            self.logger.info(f"[TwitterManager] Sending tweet: {text}")
+            self.api.update_status(text)
+        except Exception as e:
+            self.logger.info(f"[TwitterManager] Couldn't send tweet: {text} \n {e}")
         

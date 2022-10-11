@@ -29,7 +29,10 @@ FILE_EXTENSION = ".mp3"
 
 
 logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.INFO)
+logger.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
 dbManager = DBManager()
 twitterManager = TwitterManager(logger)
 gdriveManager = GDriveManager()
@@ -136,8 +139,7 @@ def track_playlist_changes():
     playlists = dbManager.get_playlists()
     for playlist in playlists:
         logger.info(f"Scanning playlist {playlist.title}...")
-        if playlist.title == KIFIXO_27_CHART_NAME or playlist.title == KIFIXO_TOP_EVER_MUSIC_NAME or playlist.title == KIFIXO_GRAND_RESERVA_NAME:
-            handle_lists(playlist)
+        handle_lists(playlist)
         
 
 def backup_db():
