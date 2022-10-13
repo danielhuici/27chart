@@ -16,6 +16,7 @@ KIFIXO_TOP_EVER_MUSIC_NAME = "Kifixo TOP-Ever Music"
 KIFIXO_GRAND_RESERVA_NAME = "Kifixo Grand Reserva"
 SALEN_LISTA_NAME = "Salen de la lista"
 SALEN_LISTA_2_NAME = "Salen de la lista 2"
+SALEN_LISTA_3_NAME = "Salen de la lista 3"
 KIFIXO_27_CHART_DELETED_SONG_TWEET = "\U0000274C SALE DE LA LISTA #Kifixo27Chart \n {} \n youtu.be/{}"
 KIFIXO_27_CHART_NEW_SONG_TWEET = "\U00002705 ENTRADA EN LISTA #Kifixo27Chart \n {} \n youtu.be/{}"
 KIFIXO_TOP_EVER_DELETED_SONG_TWEET = "\U0001F51D \U0000274C SALIDA DE #KifixoTopEverMusic \n {} \n youtu.be/{}"
@@ -48,7 +49,6 @@ def find_playlist_changes(db_list, yt_list):
                 
     return db_list_aux, yt_list_aux
 
-# Handle Kifixo27Chart, Kifixo Grand Reserva & Kifixo TOP-Ever Music playlists
 def handle_lists(db_playlist):
     added_song_tweet = ""
     retired_song_tweet = ""
@@ -87,6 +87,7 @@ def check_songs_availability():
         except exceptions.VideoUnavailable:
             tweet = SONG_BECAME_UNAVAILABLE_TWEET.format(song.title, song.id)
             twitterManager.postTweet(tweet)
+            dbManager.delete_song(song)
 
 def download_song(song):
     ydl_opts = {
@@ -170,7 +171,3 @@ while True:
         backup_db()
     n_hours += 1
     sleep(ONE_HOUR)
-
-
-
-

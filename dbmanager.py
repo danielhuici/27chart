@@ -30,7 +30,9 @@ SQL_INSERT_PLAYLIST = "INSERT INTO playlists (id, title) VALUES (?, ?)"
 SQL_INSERT_MUSIC = "INSERT INTO songs (id, title) VALUES (?, ?)"
 SQL_ATTACH_SONG_PLAYLIST = "INSERT INTO playlist_song (playlist_id, song_id) VALUES (?, ?)"
 SQL_DEATTACH_SONG_PLAYLIST = "DELETE FROM playlist_song WHERE playlist_id = ? and song_id = ?"
+SQL_DEATTACH_SONG_ALL_PLAYLIST = "DELETE FROM playlist_song WHERE song_id = ?"
 SQL_SET_SONG_FILENAME = "UPDATE songs SET filename = ? WHERE id = ?"
+SQL_DELETE_SONG =  "DELETE FROM songs WHERE song_id = ?"
 
 class DBManager():
     def __init__(self):
@@ -106,8 +108,15 @@ class DBManager():
         self.connection.commit()
         cursor.close()
 
+    def delete_song(self, song):
+        cursor = self.connection.cursor().execute(SQL_DEATTACH_SONG_ALL_PLAYLIST, (song.id,) )
+        self.connection.commit()
+        cursor = self.connection.cursor().execute(SQL_DELETE_SONG, (song.id,))
+        self.connection.commit()
+        cursor.close()
+
+
     def set_filename(self, song_id, filename):
         cursor = self.connection.cursor().execute(SQL_SET_SONG_FILENAME, (filename, song_id))
         self.connection.commit()
         cursor.close()
-
