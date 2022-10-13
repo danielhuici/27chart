@@ -79,8 +79,8 @@ class DBManager():
 
         return songs
 
-    def insert_playlist(self, id, title):
-        cursor = self.connection.cursor().execute(SQL_INSERT_PLAYLIST, (id, title))
+    def insert_playlist(self, id, title, twitter_alert):
+        cursor = self.connection.cursor().execute(SQL_INSERT_PLAYLIST, (id, title, twitter_alert))
         self.connection.commit()
         cursor.close()
 
