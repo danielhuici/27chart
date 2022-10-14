@@ -32,7 +32,7 @@ SQL_ATTACH_SONG_PLAYLIST = "INSERT INTO playlist_song (playlist_id, song_id) VAL
 SQL_DEATTACH_SONG_PLAYLIST = "DELETE FROM playlist_song WHERE playlist_id = ? and song_id = ?"
 SQL_DEATTACH_SONG_ALL_PLAYLIST = "DELETE FROM playlist_song WHERE song_id = ?"
 SQL_SET_SONG_FILENAME = "UPDATE songs SET filename = ? WHERE id = ?"
-SQL_DELETE_SONG =  "DELETE FROM songs WHERE song_id = ?"
+SQL_DELETE_SONG =  "DELETE FROM songs WHERE id = ?"
 
 class DBManager():
     def __init__(self):
