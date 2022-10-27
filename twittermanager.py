@@ -1,5 +1,6 @@
 import tweepy
 import yaml
+from debug import DEBUG_MODE 
 
 class TwitterManager:
     def __init__(self, logger):
@@ -15,9 +16,12 @@ class TwitterManager:
             self.config = yaml.safe_load(file)
 
     def postTweet(self, text):
-        try:
+        if DEBUG_MODE:
             self.logger.info(f"[TwitterManager] Sending tweet: {text}")
-            self.api.update_status(text)
-        except Exception as e:
-            self.logger.info(f"[TwitterManager] Couldn't send tweet: {text} \n {e}")
+        else:
+            try:
+                self.logger.info(f"[TwitterManager] Sending tweet: {text}")
+                self.api.update_status(text)
+            except Exception as e:
+                self.logger.info(f"[TwitterManager] Couldn't send tweet: {text} \n {e}")
         

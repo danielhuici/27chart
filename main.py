@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 import logging
 import os
-from sqlite3 import connect
 from time import sleep
 from pytube import Playlist, YouTube, exceptions
 from yt_dlp import YoutubeDL
@@ -27,6 +26,7 @@ SONG_BECAME_UNAVAILABLE_TWEET = "\U00002757 Una canción ya no está disponible 
 YOUTUBE_PLAYLIST_URL = "https://www.youtube.com/playlist?list="
 YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v="
 FILE_EXTENSION = ".mp3"
+
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -143,23 +143,10 @@ def track_playlist_changes():
         
 
 def backup_db():
-    gdriveManager.upload_file(dbManager.db_name)
-
+    filename = dbManager.generate_sql_backup()
+    gdriveManager.upload_backup(filename)
 
 ### BEGIN ###
-
-if not database_exists():
-    logger.info("Setting up database...")
-    dbManager.create_tables()
-    playlists = dbManager.get_playlists()
-    for playlist in playlists:
-        p = Playlist(f'{YOUTUBE_PLAYLIST_URL}{playlist.id}')
-        logger.info("Building playlist " + playlist.title)
-        for video in p.videos:
-            dbManager.insert_video_playlist(Song(video.video_id, video.title, ""), playlist)
-
-    download_songs()
-    logger.info("Setup finished")
 
 n_hours = 24
 while True:
