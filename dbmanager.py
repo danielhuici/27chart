@@ -103,7 +103,7 @@ class DBManager():
     def generate_sql_backup(self):
         filename = f"27chart{date.today()}.sql"
         f = open(filename, "wb")
-        c = pexpect.spawn("pg_dump -h " +  self.config["db-host"] + " -U + " + self.config["db-user"] + " " + self.config["db-name"])
+        c = pexpect.spawn("pg_dump -h " +  self.config["db_host"] + " -U + " + self.config["db_user"] + " " + self.config["db_name"])
         f.write(c.read())
         f.close()
 

@@ -155,6 +155,6 @@ while True:
     if n_hours == 24:
         n_hours = 0
         check_songs_availability()
-        backup_db()
+        #backup_db()
     n_hours += 1
     sleep(ONE_HOUR)
