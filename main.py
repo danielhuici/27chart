@@ -63,21 +63,22 @@ def handle_lists(db_playlist):
         retired_song_tweet = KIFIXO_GRAND_RESERVA_DELETED_SONG_TWEET
 
     p = Playlist(f'{YOUTUBE_PLAYLIST_URL}{db_playlist.id}')
-    retired_songs, added_songs = find_playlist_changes(db_playlist.songs, p.videos)
-    logger.info("Retired songs: " + str(len(retired_songs)) + " New songs: " + str(len(added_songs)))
+    if (len(p) > 0): # In case YT returns empty playlist due to error, it won't wipe database
+        retired_songs, added_songs = find_playlist_changes(db_playlist.songs, p.videos)
+        logger.info("Retired songs: " + str(len(retired_songs)) + " New songs: " + str(len(added_songs)))
 
-    for song in retired_songs:
-        dbManager.deattach_playlist_song(song, db_playlist)
-        if db_playlist.twitter_alert: 
-            tweet = retired_song_tweet.format(song.title, song.id)
-            twitterManager.postTweet(tweet)
+        for song in retired_songs:
+            dbManager.deattach_playlist_song(song, db_playlist)
+            if db_playlist.twitter_alert: 
+                tweet = retired_song_tweet.format(song.title, song.id)
+                twitterManager.postTweet(tweet)
 
-    for song in added_songs:
-        s = Song(song.video_id, song.title, "")
-        dbManager.insert_video_playlist(s, db_playlist)
-        if db_playlist.twitter_alert: 
-            tweet = added_song_tweet.format(s.title, s.id)
-            twitterManager.postTweet(tweet)
+        for song in added_songs:
+            s = Song(song.video_id, song.title, "")
+            dbManager.insert_video_playlist(s, db_playlist)
+            if db_playlist.twitter_alert: 
+                tweet = added_song_tweet.format(s.title, s.id)
+                twitterManager.postTweet(tweet)
 
 def check_songs_availability():
     songs = dbManager.get_all_songs()
@@ -150,11 +151,11 @@ def backup_db():
 
 n_hours = 24
 while True:
-    track_playlist_changes()
+    #track_playlist_changes()
     download_songs()
-    if n_hours == 24:
-        n_hours = 0
-        check_songs_availability()
+    #if n_hours == 24:
+    #    n_hours = 0
+    #    check_songs_availability()
         #backup_db()
-    n_hours += 1
+    #n_hours += 1
     sleep(ONE_HOUR)
