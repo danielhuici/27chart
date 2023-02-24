@@ -71,8 +71,6 @@ def get_hidden_playlist_videos(url):
     return set(list_with_hidden).difference(list_without_hidden)
 
 
-print(get_hidden_playlist_videos("https://www.youtube.com/playlist?list=PLaJq2Gw03EijUkrVadSIA9Gxll7ewZ4oY"))
-"""    
 youtube_videoids = get_youtube_videoids()
 files_videoids = get_files_videoids()
 db_videoids = get_db_videoids()
@@ -97,6 +95,5 @@ print("---")
 print(result6)
 print("---")
 
-"""
 
     

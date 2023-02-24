@@ -151,11 +151,11 @@ def backup_db():
 
 n_hours = 24
 while True:
-    #track_playlist_changes()
+    track_playlist_changes()
     download_songs()
-    #if n_hours == 24:
-    #    n_hours = 0
-    #    check_songs_availability()
+    if n_hours == 24:
+        n_hours = 0
+        check_songs_availability()
         #backup_db()
-    #n_hours += 1
+    n_hours += 1
     sleep(ONE_HOUR)

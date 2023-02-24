@@ -2,7 +2,7 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from debug import DEBUG_MODE
 
-SONGS_FOLDER_ID = "1ohudHRKbA3XcmvODZA9FvViuwwhiu7aO"
+SONGS_FOLDER_ID = "1pO8c1YHSHj5Yvw8y0hBuOQfp7GWjElTm"
 DB_BACKUPS_FOLDER_ID = "1Q1rtb2ghMAVYvt6aQbmPiOR74u4fv7ia"
 
 class GDriveManager():
