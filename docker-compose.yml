@@ -1,5 +1,5 @@
 version: '3'
 services:
   27chart-tracker:
-    build: ./Dockerfile
+    build: .
     image: 27chart-tracker:latest
