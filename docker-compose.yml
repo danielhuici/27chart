@@ -3,3 +3,4 @@ services:
   27chart-tracker:
     build: .
     image: 27chart-tracker:latest
+    network_mode: bridge
