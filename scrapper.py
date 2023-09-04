@@ -28,7 +28,7 @@ def get_actual_videoids(url, ocultos):
     for _ in range (0, 10):
         browser.execute_script("var scrollingElement = (document.scrollingElement || document.body);scrollingElement.scrollTop = scrollingElement.scrollHeight;")
         time.sleep(2)
-          # further code below
+        
 
     youtube_elements = browser.find_elements(By.ID, "video-title")
     links = [elem.get_attribute('href') for elem in youtube_elements]
@@ -70,11 +70,39 @@ def get_hidden_playlist_videos(url):
     list_with_hidden = get_actual_videoids(url, True)
     return set(list_with_hidden).difference(list_without_hidden)
 
+def get_file_id(filetitle):
+    # Patrón de expresión regular para obtener la subcadena entre "[ ]"
+    pattern = r'\[(.*?)\]\.mp3'
 
+    match = re.search(pattern, filetitle)
+
+    if match:
+        return match.group(1)
+    else:
+        return "Not important"
+
+def find_gdrive_duplicates():
+    filetitles = gdriveManager.get_all_file_titles()
+    n_repeated = 0
+    map = {}
+    for filetitle in filetitles:
+        file_id = get_file_id(filetitle)
+        if file_id in map:
+            map[file_id] += 1
+        else:
+            map[file_id] = 1
+    
+    for file_id in map:
+        if map[file_id] > 1:
+            n_repeated += 1
+            print(file_id)
+
+    print(f"Repeated files: {n_repeated}")
+
+#find_gdrive_duplicates()
+db_videoids = get_db_videoids()
 youtube_videoids = get_youtube_videoids()
 files_videoids = get_files_videoids()
-db_videoids = get_db_videoids()
-
 
 result = set(youtube_videoids).difference(files_videoids)
 result2 = set(youtube_videoids).difference(db_videoids)
@@ -82,18 +110,22 @@ result3 = set(db_videoids).difference(youtube_videoids)
 result4 = set(db_videoids).difference(files_videoids)
 result5 = set(files_videoids).difference(db_videoids)
 result6 = set(files_videoids).difference(youtube_videoids)
+print(f"Vídeos en YouTube pero no en Google Drive: {len(result)}")
 print(result)
-print("---")
+print("-----------------------------------------")
+print(f"Vídeos en YouTube pero no en Base de Datos: {len(result2)}")
 print(result2)
-print("---")
+print("-----------------------------------------")
+print(f"Vídeos en Base de Datos pero no en YouTube: {len(result3)}")
 print(result3)
-print("---")
+print("-----------------------------------------")
+print(f"Vídeos en Base de Datos pero no en Google Drive: {len(result4)}")
 print(result4)
-print("---")
+print("-----------------------------------------")
+print(f"Vídeos en Google Drive pero no en Base de Datos: {len(result5)}")
 print(result5)
-print("---")
+print("-----------------------------------------")
+print(f"Vídeos en Google Drive pero no en YouTube: {len(result6)}")
 print(result6)
 print("---")
 
-
-    
