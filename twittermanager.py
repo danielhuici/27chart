@@ -5,9 +5,11 @@ from debug import DEBUG_MODE
 class TwitterManager:
     def __init__(self, logger):
         self.load_credentials()
-        self.auth = tweepy.OAuthHandler(self.config['twitter_api_key'], self.config['twitter_secret'])
-        self.auth.set_access_token(self.config['twitter_access_token'], self.config['twitter_access_token_secret'])
-        self.api = tweepy.API(self.auth)
+        self.api = tweepy.Client(bearer_token=self.config['bearer_token'], 
+                      access_token=self.config['twitter_access_token'],
+                      access_token_secret=self.config['twitter_access_token_secret'],
+                      consumer_key=self.config['twitter_consumer_key'],
+                      consumer_secret=self.config['twitter_consumer_secret'])
         self.logger = logger
 
 
@@ -21,7 +23,7 @@ class TwitterManager:
         else:
             try:
                 self.logger.info(f"[TwitterManager] Sending tweet: {text}")
-                self.api.update_status(text)
+                self.api.create_tweet(text=text)
             except Exception as e:
                 self.logger.info(f"[TwitterManager] Couldn't send tweet: {text} \n {e}")
         

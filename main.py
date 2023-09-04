@@ -71,14 +71,14 @@ def handle_lists(db_playlist):
             dbManager.deattach_playlist_song(song, db_playlist)
             if db_playlist.twitter_alert: 
                 tweet = retired_song_tweet.format(song.title, song.id)
-                twitterManager.postTweet(tweet)
+                twitterManager.post_tweet(tweet)
 
         for song in added_songs:
             s = Song(song.video_id, song.title, "")
             dbManager.insert_video_playlist(s, db_playlist)
             if db_playlist.twitter_alert: 
                 tweet = added_song_tweet.format(s.title, s.id)
-                twitterManager.postTweet(tweet)
+                twitterManager.post_tweet(tweet)
 
 def check_songs_availability():
     songs = dbManager.get_all_songs()
@@ -87,7 +87,7 @@ def check_songs_availability():
             YouTube(YOUTUBE_VIDEO_URL + song.id).check_availability()
         except exceptions.VideoUnavailable:
             tweet = SONG_BECAME_UNAVAILABLE_TWEET.format(song.title, song.id)
-            twitterManager.postTweet(tweet)
+            twitterManager.post_tweet(tweet)
             dbManager.delete_song(song)
 
 def download_song(song):
