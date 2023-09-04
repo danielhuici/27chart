@@ -21,7 +21,7 @@ KIFIXO_27_CHART_NEW_SONG_TWEET = "\U00002705 ENTRADA EN LISTA #Kifixo27Chart \n 
 KIFIXO_TOP_EVER_DELETED_SONG_TWEET = "\U0001F51D \U0000274C SALIDA DE #KifixoTopEverMusic \n {} \n youtu.be/{}"
 KIFIXO_TOP_EVER_NEW_SONG_TWEET = "\U0001F51D \U00002705 ENTRADA EN #KifixoTopEverMusic \n {} \n youtu.be/{}"
 KIFIXO_GRAND_RESERVA_DELETED_SONG_TWEET = "\U0001F7E1 THANK YOU \U0001F7E1 \n Salida #KifixoGrandReserva y revelada para Kifixo 27 Chart \n {} \n youtu.be/{}"
-KIFIXO_GRAND_RESERVA_NEW_SONG_TWEET = "\U00002B50 Congratulations \U00002B50 \n ENTRADA A #KifixoGrandReserva Y CANDIDATA A #KifixoSong2023 \n {} \n youtu.be/{}"
+KIFIXO_GRAND_RESERVA_NEW_SONG_TWEET = "\U00002B50 Congratulations \U00002B50 \n ENTRADA A #KifixoGrandReserva Y CANDIDATA A #KifixoSong2024 \n {} \n youtu.be/{}"
 SONG_BECAME_UNAVAILABLE_TWEET = "\U00002757 Una canción ya no está disponible @kifixo23 \U00002757 \n {} youtu.be/{}\n"
 YOUTUBE_PLAYLIST_URL = "https://www.youtube.com/playlist?list="
 YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v="
@@ -30,7 +30,7 @@ FILE_EXTENSION = ".mp3"
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
-    level=logging.INFO,
+    level=logging.WARN,
     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 dbManager = DBManager()
