@@ -17,7 +17,7 @@ class TwitterManager:
         with open('settings.yaml', 'r') as file:
             self.config = yaml.safe_load(file)
 
-    def postTweet(self, text):
+    def post_tweet(self, text):
         if DEBUG_MODE:
             self.logger.info(f"[TwitterManager] Sending tweet: {text}")
         else:
