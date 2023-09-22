@@ -7,7 +7,11 @@ DB_BACKUPS_FOLDER_ID = "1Q1rtb2ghMAVYvt6aQbmPiOR74u4fv7ia"
 
 class GDriveManager():
     def __init__(self):
-        self.drive = GoogleDrive(GoogleAuth())
+        gauth = GoogleAuth()
+        gauth.LoadClientConfigFile('credentials/client_secrets.json')
+        gauth.LoadCredentialsFile('credentials/credentials.json')
+
+        self.drive = GoogleDrive(gauth)
 
     def get_all_file_titles(self):
         file_titles = []

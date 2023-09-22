@@ -2,9 +2,11 @@ import logging
 import psycopg2
 import yaml
 import pexpect
+import os
 from playlist import Playlist
 from song import Song
 from datetime import date
+
 
 SQL_GET_PLAYLISTS = "SELECT * FROM playlists"
 SQL_GET_ALL_SONGS = "SELECT * FROM songs"
@@ -16,22 +18,18 @@ SQL_ATTACH_SONG_PLAYLIST = "INSERT INTO playlist_song (playlist_id, song_id) VAL
 SQL_DEATTACH_SONG_PLAYLIST = "DELETE FROM playlist_song WHERE playlist_id = %s and song_id = %s"
 SQL_DEATTACH_SONG_ALL_PLAYLIST = "DELETE FROM playlist_song WHERE song_id = %s"
 SQL_SET_SONG_FILENAME = "UPDATE songs SET filename = %s WHERE id = %s"
+SQL_SET_SONG_TITLE = "UPDATE songs SET title = %s WHERE id = %s"
 SQL_DELETE_SONG =  "DELETE FROM songs WHERE id = %s"
 
 class DBManager():
     def __init__(self):
-        self.load_credentials()
-        self.connection = psycopg2.connect(database = self.config["db_name"],
-                        host= self.config["db_host"],
-                        user= self.config["db_user"],
-                        password=self.config["db_password"],
-                        port=self.config["db_port"])
+        self.connection = psycopg2.connect(database = os.getenv("DB_NAME"),
+                        host = os.getenv("DB_HOST"),
+                        user = os.getenv("DB_USER"),
+                        password = os.getenv("DB_PASSWORD"),
+                        port = os.getenv("DB_PORT"))
         self.cursor = self.connection.cursor()
         logging.info("Database connection successful")
-
-    def load_credentials(self):
-        with open('settings.yaml', 'r') as file:
-            self.config = yaml.safe_load(file)
 
 
     def get_playlists(self):
@@ -98,6 +96,10 @@ class DBManager():
 
     def set_filename(self, song_id, filename):
         self.cursor.execute(SQL_SET_SONG_FILENAME, (filename, song_id))
+        self.connection.commit()
+
+    def set_song_title(self, song_id, title):
+        self.cursor.execute(SQL_SET_SONG_TITLE, (title, song_id))
         self.connection.commit()
 
     def generate_sql_backup(self):

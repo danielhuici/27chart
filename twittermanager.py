@@ -1,15 +1,15 @@
 import tweepy
 import yaml
+import os
 from debug import DEBUG_MODE 
 
 class TwitterManager:
     def __init__(self, logger):
-        self.load_credentials()
-        self.api = tweepy.Client(bearer_token=self.config['bearer_token'], 
-                      access_token=self.config['twitter_access_token'],
-                      access_token_secret=self.config['twitter_access_token_secret'],
-                      consumer_key=self.config['twitter_consumer_key'],
-                      consumer_secret=self.config['twitter_consumer_secret'])
+        self.api = tweepy.Client(bearer_token=os.getenv("BEARER_TOKEN"), 
+                      access_token=os.getenv("TWITTER_ACCESS_TOKEN"),
+                      access_token_secret=os.getenv("TWITTER_ACCESS_TOKEN_SECRECT"),
+                      consumer_key=os.getenv("TWITTER_CONSUMER_KEY"),
+                      consumer_secret=os.getenv("TWITTER_CONSUMER_KEY_SECRET"))
         self.logger = logger
 
 

@@ -4,3 +4,5 @@ services:
     build: .
     image: 27chart-tracker:latest
     network_mode: bridge
+    volumes:
+      - ../credentials:credentials

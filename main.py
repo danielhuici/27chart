@@ -25,12 +25,12 @@ KIFIXO_GRAND_RESERVA_NEW_SONG_TWEET = "\U00002B50 Congratulations \U00002B50 \n 
 SONG_BECAME_UNAVAILABLE_TWEET = "\U00002757 Una canción ya no está disponible @kifixo23 \U00002757 \n {} youtu.be/{}\n"
 YOUTUBE_PLAYLIST_URL = "https://www.youtube.com/playlist?list="
 YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v="
-FILE_EXTENSION = ".mp3"
+DOWNLOADED_YOUTUBE_SONG_EXTENSION = ".mp3"
 
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
-    level=logging.WARN,
+    level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 dbManager = DBManager()
@@ -121,7 +121,7 @@ def database_exists():
 
 def find_song_file():
     for file in os.listdir("."):
-        if file.endswith(FILE_EXTENSION):
+        if file.endswith(DOWNLOADED_YOUTUBE_SONG_EXTENSION):
             return file
 
 def find_uncommited_songs():
