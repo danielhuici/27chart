@@ -25,10 +25,11 @@ class TwitterManager:
         self.api = tweepy.Client(
             bearer_token=os.getenv('TWITTER_BEARER_TOKEN'),
             access_token=os.getenv('TWITTER_ACCESS_TOKEN'),
-            access_token_secret=os.getenv('TWITTER_ACCESS_TOKEN_SECRET'),
+            access_token_secret=os.getenv('TWITTER_ACCESS_TOKEN_SECRECT'),
             consumer_key=os.getenv('TWITTER_CONSUMER_KEY'),
             consumer_secret=os.getenv('TWITTER_CONSUMER_KEY_SECRET')
         )
+
         self.logger = logging.getLogger(__name__)
 
     def _post(self, text):
@@ -60,3 +61,9 @@ class TwitterManager:
         retired_song_tweet = tweets_templates.get("retired", "").format(song.title, song.id)
 
         return added_song_tweet, retired_song_tweet
+
+if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()
+    manager = TwitterManager()
+    manager._post("Test")
