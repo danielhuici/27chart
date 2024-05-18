@@ -2,4 +2,9 @@ settings.yaml
 __pycache__
 27chart.db
 docker-compose.yml
+credentials/
+client_secrets.json
+credentials.json
+*.log
+env/
 .env

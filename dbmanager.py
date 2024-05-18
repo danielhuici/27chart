@@ -1,11 +1,10 @@
-import logging
 import psycopg2
-import yaml
-import pexpect
+import subprocess
 import os
-from playlist import Playlist
-from song import Song
+from datalayer.playlist import Playlist
+from datalayer.song import Song
 from datetime import date
+import logging
 
 
 SQL_GET_PLAYLISTS = "SELECT * FROM playlists"
@@ -23,14 +22,15 @@ SQL_DELETE_SONG =  "DELETE FROM songs WHERE id = %s"
 
 class DBManager():
     def __init__(self):
-        self.connection = psycopg2.connect(database = os.getenv("DB_NAME"),
-                        host = os.getenv("DB_HOST"),
-                        user = os.getenv("DB_USER"),
-                        password = os.getenv("DB_PASSWORD"),
-                        port = os.getenv("DB_PORT"))
+        self.connection = psycopg2.connect(
+                        database = os.getenv('DB_NAME'),
+                        host = os.getenv('DB_HOST'),
+                        user = os.getenv('DB_USER'),
+                        password = os.getenv('DB_PASSWORD'),
+                        port = os.getenv('DB_PORT'))
         self.cursor = self.connection.cursor()
-        logging.info("Database connection successful")
-
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Database connection successful")
 
     def get_playlists(self):
         self.cursor.execute(SQL_GET_PLAYLISTS)
@@ -93,7 +93,6 @@ class DBManager():
         self.cursor.execute(SQL_DELETE_SONG, (song.id,))
         self.connection.commit()
 
-
     def set_filename(self, song_id, filename):
         self.cursor.execute(SQL_SET_SONG_FILENAME, (filename, song_id))
         self.connection.commit()
@@ -103,11 +102,19 @@ class DBManager():
         self.connection.commit()
 
     def generate_sql_backup(self):
+        connection_string = (
+            f"postresql://{os.getenv('DB_USER')}:"
+            f"{os.getenv('DB_PASSWORD')}@"
+            f"{os.getenv('DB_HOST')}:"
+            f"{os.getenv('DB_PORT')}/"
+            f"{os.getenv('DB_NAME')}"
+        )
         filename = f"27chart{date.today()}.sql"
-        f = open(filename, "wb")
-        c = pexpect.spawn("pg_dump -h " +  self.config["db_host"] + " -U + " + self.config["db_user"] + " " + self.config["db_name"])
-        f.write(c.read())
-        f.close()
-
+        command = ["pg_dump", "-h", os.getenv('DB_HOST'), "-p", os.getenv('DB_PORT'),
+                   "-Fc", "-b", "-U", os.getenv('DB_USER'), "-d", os.getenv('DB_NAME'),
+                   "-f", filename]
+        
+        subprocess.run(command)     
         return filename
+
 

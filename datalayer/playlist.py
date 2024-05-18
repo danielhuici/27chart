@@ -8,10 +8,3 @@ class Playlist():
     
     def add_song(self, song):
         self.songs.append(song)
-
-    def get_ids(self):
-        ids = []
-        for song in self.songs:
-            ids.append(song.id)
-
-        return ids

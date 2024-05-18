@@ -5,8 +5,6 @@ from gdrivemanager import GDriveManager
 import time
 import re
 
-
-
 print("HELLO WORLD")
 
 dbManager = DBManager()

@@ -1,8 +1,23 @@
-version: '3'
+version: '3.8'
 services:
   27chart-tracker:
     build: .
     image: 27chart-tracker:latest
-    network_mode: bridge
+    environment:
+      - TWITTER_ACCESS_TOKEN=$TWITTER_ACCESS_TOKEN
+      - TWITTER_ACCESS_TOKEN_SECRECT=$TWITTER_ACCESS_TOKEN_SECRECT
+      - TWITTER_CONSUMER_KEY=$TWITTER_CONSUMER_KEY
+      - TWITTER_CONSUMER_KEY_SECRET=$TWITTER_CONSUMER_KEY_SECRET
+      - BEARER_TOKEN=$BEARER_TOKEN
+      - DB_HOST=$DB_HOST
+      - DB_PORT=$DB_PORT
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - PGPASSWORD=$DB_PASSWORD
+      - GDRIVE_CLIENT_SECRET_PATH=$GDRIVE_CLIENT_SECRET_PATH
+      - GDRIVE_CREDENTIALS_PATH=$GDRIVE_CREDENTIALS_PATH
+      - GDRIVE_SONGS_PATH=$GDRIVE_SONGS_PATH
+      - GDRIVE_BACKUPS_PATH=$GDRIVE_BACKUPS_PATH
     volumes:
-      - ../credentials:credentials
+      - /data/27chart:/credentials
