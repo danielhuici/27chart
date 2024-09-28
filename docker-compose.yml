@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   27chart-tracker:
     build: .
@@ -13,14 +12,14 @@ services:
       - DB_HOST=$DB_HOST
       - DB_PORT=$DB_PORT
       - DB_USER=$DB_USER
-      - DB_PASSWORD=$DB_PASSWORD
       - DB_NAME=$DB_NAME
-      - PGPASSWORD=$DB_PASSWORD
+      - PGPASSWORD=$PGPASSWORD
       - GDRIVE_CLIENT_SECRET_PATH=$GDRIVE_CLIENT_SECRET_PATH
       - GDRIVE_CREDENTIALS_PATH=$GDRIVE_CREDENTIALS_PATH
       - GDRIVE_SONGS_PATH=$GDRIVE_SONGS_PATH
       - GDRIVE_BACKUPS_PATH=$GDRIVE_BACKUPS_PATH
       - YTDLP_CACHE_DIR=$YTDLP_CACHE_DIR
       - FALLBACK_PROXY_URL=$FALLBACK_PROXY_URL
+      - SELENIUM_HOST=$SELENIUM_HOST
     volumes:
-      - /data/27chart:/credentials
+      - /data/27chart:/data/27chart

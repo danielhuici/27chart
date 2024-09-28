@@ -9,6 +9,7 @@ from urllib.parse import urlparse, parse_qs
 import time
 from contextlib import contextmanager
 import logging
+import os
 
 from datalayer.song import Song
 
@@ -27,12 +28,13 @@ class YoutubeScrapper():
         self.driver_path = driver_path
         self.timeout = timeout
         self.logger = logging.getLogger(__name__)
+        self.selenium_host = os.getenv('SELENIUM_HOST')
 
     @contextmanager
     def _scraper_session(self):
         driver_options = Options()
         driver_options.add_argument("--headless")
-        driver = webdriver.Chrome(service=Service("/usr/bin/chromedriver"), options=driver_options)
+        driver = webdriver.Remote(f'http://{self.selenium_host}', options=driver_options)
         driver.maximize_window()
 
         try:
