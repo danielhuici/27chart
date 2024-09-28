@@ -32,17 +32,18 @@ class TwitterManager:
 
         self.logger = logging.getLogger(__name__)
 
-    def _post(self, text):
+    def _post(self, text: str):
         if not DEBUG_MODE:
             try:
-                self.api.create_tweet(text=text)
                 return True
+                self.api.create_tweet(text=text)
             except Exception as e:
                 self.logger.error(f"Couldn't post tweet: {text}\n{e}")
                 return False
+        return False
 
-    def post_song_status_change_tweet(self, db_playlist, song: Song, status_added: bool):
-        added_song_tweet, retired_song_tweet = self.build_tweet(db_playlist, song)
+    def post_song_status_change_tweet(self, playlist_title: str, song: Song, status_added: bool):
+        added_song_tweet, retired_song_tweet = self.build_tweet(playlist_title, song)
         text = added_song_tweet if status_added else retired_song_tweet
 
         self.logger.info(f"POST TWEET - Song status changed: {text}")
@@ -55,8 +56,8 @@ class TwitterManager:
         self.logger.info(f"POST TWEET - Song became unavailable: {text}")
         return self._post(text)
 
-    def build_tweet(self, db_playlist, song: Song):
-        tweets_templates = TWEET_TEMPLATES.get(db_playlist.title, {})
+    def build_tweet(self, playlist_title: str, song: Song):
+        tweets_templates = TWEET_TEMPLATES.get(playlist_title, {})
         added_song_tweet = tweets_templates.get("added", "").format(song.title, song.id)
         retired_song_tweet = tweets_templates.get("retired", "").format(song.title, song.id)
 
@@ -66,4 +67,4 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
     manager = TwitterManager()
-    manager._post("Test")
+    manager.post_song_status_change_tweet("Test")

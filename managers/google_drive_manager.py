@@ -3,7 +3,7 @@ from pydrive.drive import GoogleDrive
 import os
 from debug import DEBUG_MODE
 
-class GDriveManager():
+class GoogleDriveManager():
     def __init__(self):
         gauth = GoogleAuth()
         gauth.LoadClientConfigFile(os.getenv('GDRIVE_CLIENT_SECRET_PATH'))

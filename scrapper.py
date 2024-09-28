@@ -1,14 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from dbmanager import DBManager
-from gdrivemanager import GDriveManager
+from managers.db_manager import DBManager
+from managers.google_drive_manager import GDriveManager
 import time
 import re
-
-print("HELLO WORLD")
-
-dbManager = DBManager()
-gdriveManager = GDriveManager()
+from dotenv import load_dotenv
 
 def get_actual_videoids(url, ocultos):
     browser = webdriver.Edge()
@@ -51,6 +47,7 @@ def get_files_videoids():
     for index, value in enumerate(filetitles):
         if value != "Lost and Found" and value != "DB Backups" and value != "27chart.db":
             m = re.findall(r"\[([A-Za-z0-9_-]+)\]", value)
+            print(filetitles[index])
             filetitles[index] = m[len(m) -1]  
     return filetitles
 
@@ -97,33 +94,41 @@ def find_gdrive_duplicates():
 
     print(f"Repeated files: {n_repeated}")
 
-#find_gdrive_duplicates()
-db_videoids = get_db_videoids()
-youtube_videoids = get_youtube_videoids()
-files_videoids = get_files_videoids()
+if __name__:
+    print("HELLO WORLD")
+    load_dotenv()
 
-result = set(youtube_videoids).difference(files_videoids)
-result2 = set(youtube_videoids).difference(db_videoids)
-result3 = set(db_videoids).difference(youtube_videoids)
-result4 = set(db_videoids).difference(files_videoids)
-result5 = set(files_videoids).difference(db_videoids)
-result6 = set(files_videoids).difference(youtube_videoids)
-print(f"Vídeos en YouTube pero no en Google Drive: {len(result)}")
-print(result)
-print("-----------------------------------------")
-print(f"Vídeos en YouTube pero no en Base de Datos: {len(result2)}")
-print(result2)
-print("-----------------------------------------")
-print(f"Vídeos en Base de Datos pero no en YouTube: {len(result3)}")
-print(result3)
-print("-----------------------------------------")
-print(f"Vídeos en Base de Datos pero no en Google Drive: {len(result4)}")
-print(result4)
-print("-----------------------------------------")
-print(f"Vídeos en Google Drive pero no en Base de Datos: {len(result5)}")
-print(result5)
-print("-----------------------------------------")
-print(f"Vídeos en Google Drive pero no en YouTube: {len(result6)}")
-print(result6)
-print("---")
+    dbManager = DBManager()
+    gdriveManager = GDriveManager()
+
+    #find_gdrive_duplicates()
+    db_videoids = get_db_videoids()
+    files_videoids = get_files_videoids()
+    youtube_videoids = None#get_youtube_videoids()
+    
+
+    result = set(youtube_videoids).difference(files_videoids)
+    result2 = set(youtube_videoids).difference(db_videoids)
+    result3 = set(db_videoids).difference(youtube_videoids)
+    result4 = set(db_videoids).difference(files_videoids)
+    result5 = set(files_videoids).difference(db_videoids)
+    result6 = set(files_videoids).difference(youtube_videoids)
+    print(f"Vídeos en YouTube pero no en Google Drive: {len(result)}")
+    print(result)
+    print("-----------------------------------------")
+    print(f"Vídeos en YouTube pero no en Base de Datos: {len(result2)}")
+    print(result2)
+    print("-----------------------------------------")
+    print(f"Vídeos en Base de Datos pero no en YouTube: {len(result3)}")
+    print(result3)
+    print("-----------------------------------------")
+    print(f"Vídeos en Base de Datos pero no en Google Drive: {len(result4)}")
+    print(result4)
+    print("-----------------------------------------")
+    print(f"Vídeos en Google Drive pero no en Base de Datos: {len(result5)}")
+    print(result5)
+    print("-----------------------------------------")
+    print(f"Vídeos en Google Drive pero no en YouTube: {len(result6)}")
+    print(result6)
+    print("---")
 

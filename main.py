@@ -1,32 +1,15 @@
 from __future__ import unicode_literals
-import logging
-from logging.handlers import RotatingFileHandler
+
 from dotenv import load_dotenv
 import schedule
 import time
+import os
+import logging
 
+from common.utils import configure_logger
+from managers.db_manager import DBManager
+from managers.google_drive_manager import GoogleDriveManager
 from chart_tracker import ChartTracker
-
-def configure_logger():
-        # Set the logging level for specific loggers
-        logging.getLogger("requests").setLevel(logging.WARNING)
-        logging.getLogger("urllib3").setLevel(logging.WARNING)
-        logging.getLogger("httpx").setLevel(logging.WARNING)
-        logging.getLogger("httpcore").setLevel(logging.WARNING)
-
-        # Configure the console logger
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(logging.Formatter('%(levelname)s [%(asctime)s] %(name)s - %(message)s'))
-
-        # Configure the file logger
-        file_handler = RotatingFileHandler('monitor.log', maxBytes=10e6)
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(logging.Formatter('%(levelname)s [%(asctime)s] %(name)s - %(message)s'))
-
-        # Configure the root logger with both handlers
-        logging.basicConfig(level=logging.NOTSET,
-                            handlers=[console_handler, file_handler])
 
 
 if __name__ == "__main__":
@@ -35,13 +18,16 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
     logger.info("Kifixo 27 Chart Tracker is starting up!")
-    chartTracker = ChartTracker()
-    logger.info("Ready to track changes!")
-    schedule.every().hour.do(chartTracker.track_playlist_changes)
-    schedule.every().hour.do(chartTracker.backup_songs)
-    schedule.every().day.do(chartTracker.check_songs_availability)
-    schedule.every().day.do(chartTracker.backup_db)
 
+    db_manager = DBManager()
+    gdrive_manager = GoogleDriveManager()
+    chart_tracker = ChartTracker(db_manager, gdrive_manager)
+    logger.info("Ready to track changes!")
+
+    schedule.every().day.do(chart_tracker.backup_db)
+    schedule.every().hour.do(chart_tracker.track_playlist_changes)
+    schedule.every().hour.do(chart_tracker.backup_songs)
+    
     schedule.run_all() # Run everything on the beginning
     while True:
         schedule.run_pending()
