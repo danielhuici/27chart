@@ -1,7 +1,7 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import os
-from debug import DEBUG_MODE
+from common.utils import debug_mode
 
 class GoogleDriveManager():
     def __init__(self):
@@ -21,13 +21,13 @@ class GoogleDriveManager():
         return file_titles
 
     def upload_file(self, filename):
-        if not DEBUG_MODE:
+        if not debug_mode():
             file = self.drive.CreateFile({'parents': [{'id': self.songs_folder_id}]})
             file.SetContentFile(filename)
             file.Upload()
 
     def upload_backup(self, filename):
-        if not DEBUG_MODE:
+        if not debug_mode():
             file = self.drive.CreateFile({'parents': [{'id': self.db_backups_folder_id}]})
             file.SetContentFile(filename)
             file.Upload()

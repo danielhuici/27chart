@@ -4,7 +4,7 @@ import os
 from datalayer.playlist import Playlist
 from datalayer.song import Song
 from datetime import date
-from debug import DEBUG_MODE
+from common.utils import debug_mode
 import logging
 
 SQL_GET_PLAYLISTS = "SELECT * FROM playlists"

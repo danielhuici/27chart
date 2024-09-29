@@ -1,8 +1,8 @@
 import tweepy
 import os
 import logging
-from debug import DEBUG_MODE
 from datalayer.song import Song
+from common.utils import debug_mode
 
 TWEET_TEMPLATES = {
     "Kifixo 27 Chart": {
@@ -33,7 +33,7 @@ class TwitterManager:
         self.logger = logging.getLogger(__name__)
 
     def _post(self, text: str):
-        if not DEBUG_MODE:
+        if not debug_mode():
             try:
                 return True
                 self.api.create_tweet(text=text)

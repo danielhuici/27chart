@@ -1,5 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
+import os
 
 def configure_logger():
         # Set the logging level for specific loggers
@@ -21,4 +22,7 @@ def configure_logger():
 
         # Configure the root logger with both handlers
         logging.basicConfig(level=logging.NOTSET,
-                            handlers=[console_handler, file_handler])
+                                handlers=[console_handler, file_handler])
+
+def debug_mode():
+        return os.getenv('DEBUG') == '1'

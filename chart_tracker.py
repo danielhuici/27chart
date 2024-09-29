@@ -5,7 +5,6 @@ from managers.google_drive_manager import GoogleDriveManager
 from managers.youtube_scrapper import YoutubeScrapper
 from managers.youtube_downloader import YoutubeDownloader
 
-from datalayer.song import Song
 import logging
 
 SETTINGS_PATH = f"{os.getenv('CREDENTIALS_PATH')}/settings.yaml"
@@ -37,7 +36,7 @@ class ChartTracker():
             if self.youtube_downloader.check_video_availability(song):
                 removed_youtube_songs.append(song)
             else:
-                unavailable_songs(song)
+                unavailable_songs.append(song)
 
         return added_youtube_songs, removed_youtube_songs, unavailable_songs
 
