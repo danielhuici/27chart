@@ -73,6 +73,11 @@ class ChartTracker():
         return unsaved_songs 
 
     def handle_playlist_changes(self, playlist, retired_songs, added_songs, twitter_alert=False):
+        for song in added_songs:
+            self.db_manager.insert_video_playlist(song, playlist)
+            if twitter_alert: 
+                self.twitterManager.post_song_status_change_tweet(playlist.title, song, status_added=True)
+
         for song in retired_songs: 
             self.db_manager.deattach_playlist_song(song, playlist) # TODO: Check if song is still attached to some list, in case it is alone, just call delete_song
             if not self.db_manager.is_song_attached_to_some_playlist(song):
@@ -80,10 +85,7 @@ class ChartTracker():
             if twitter_alert: 
                 self.twitterManager.post_song_status_change_tweet(playlist.title, song, status_added=False)
 
-        for song in added_songs:
-            self.db_manager.insert_video_playlist(song, playlist)
-            if twitter_alert: 
-                self.twitterManager.post_song_status_change_tweet(playlist.title, song, status_added=True)
+        
 
     def track_playlist_changes(self):
         playlists = self.db_manager.get_playlists()
