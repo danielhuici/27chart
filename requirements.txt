@@ -7,3 +7,4 @@ schedule
 selenium
 tweepy
 yt_dlp
+https://github.com/coletdjnz/yt-dlp-youtube-oauth2/archive/refs/heads/master.zip
