@@ -36,6 +36,7 @@ class TwitterManager:
         if not debug_mode():
             try:
                 self.api.create_tweet(text=text)
+                return True
             except Exception as e:
                 self.logger.error(f"Couldn't post tweet: {text}\n{e}")
                 return False

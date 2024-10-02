@@ -40,11 +40,8 @@ class ChartTracker():
 
         return added_youtube_songs, removed_youtube_songs, unavailable_songs
 
-    def report_unavailable_songs(self, unavailable_songs):
+    def handle_unavailable_songs(self, unavailable_songs):
         for song in unavailable_songs:
-            db_song = self.db_manager.get_song(song.id)
-            if db_song is not None:
-                song = db_song
             if self.twitterManager.post_song_status_unavailable_tweet(song):
                 self.db_manager.delete_song(song)
 
@@ -79,13 +76,14 @@ class ChartTracker():
                 self.twitterManager.post_song_status_change_tweet(playlist.title, song, status_added=True)
 
         for song in retired_songs: 
-            self.db_manager.deattach_playlist_song(song, playlist) # TODO: Check if song is still attached to some list, in case it is alone, just call delete_song
-            if not self.db_manager.is_song_attached_to_some_playlist(song):
-                self.db_manager.delete_song(song)
+            self.db_manager.deattach_playlist_song(song, playlist)
             if twitter_alert: 
                 self.twitterManager.post_song_status_change_tweet(playlist.title, song, status_added=False)
 
-        
+    def clean_dettached_songs(self):
+        dettached_songs = self.db_manager.get_dettached_songs()
+        for song in dettached_songs:
+            self.db_manager.delete_song(song)
 
     def track_playlist_changes(self):
         playlists = self.db_manager.get_playlists()
@@ -93,15 +91,14 @@ class ChartTracker():
             self.logger.info(f"Scanning playlist {db_playlist.title}...")
             current_db_playlist_songs = self.db_manager.get_songs_playlist(db_playlist.id)
             current_youtube_playlist_songs = self.youtube_scrapper.get_available_playlist_videos(db_playlist.id)
-
             if (len(current_youtube_playlist_songs) > 0): # In case YT returns empty playlist due to error, it won't wipe database
                 added_songs, retired_songs, unavailable_songs = self.find_playlist_changes(current_db_playlist_songs, current_youtube_playlist_songs)
-                self.report_unavailable_songs(unavailable_songs)
-                
+                self.handle_unavailable_songs(unavailable_songs)
                 self.logger.info(f"Retired songs: {len(retired_songs)} ---- New songs: {len(added_songs)} --- Unavailable songs: {len(unavailable_songs)}")
                 self.handle_playlist_changes(db_playlist, retired_songs, added_songs, db_playlist.twitter_alert)
             else:
                 self.logger.warning(f"YouTube returned an empty playlist ({db_playlist})")
+        self.clean_dettached_songs()
 
     def backup_db(self):
         filename = self.db_manager.generate_sql_backup()

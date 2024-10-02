@@ -8,3 +8,6 @@ class Playlist():
     
     def add_song(self, song):
         self.songs.append(song)
+
+    def __eq__(self, id):
+        return self.id == id

@@ -24,9 +24,10 @@ if __name__ == "__main__":
     chart_tracker = ChartTracker(db_manager, gdrive_manager)
     logger.info("Ready to track changes!")
 
+    schedule.every().hour.do(chart_tracker.backup_songs)
     schedule.every().day.do(chart_tracker.backup_db)
     schedule.every().hour.do(chart_tracker.track_playlist_changes)
-    schedule.every().hour.do(chart_tracker.backup_songs)
+    
     
     schedule.run_all() # Run everything on the beginning
     while True:

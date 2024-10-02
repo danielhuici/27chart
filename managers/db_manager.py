@@ -12,7 +12,7 @@ SQL_GET_SONG = "SELECT * FROM songs WHERE id = %s"
 SQL_GET_ALL_SONGS = "SELECT * FROM songs"
 SQL_CHECK_SONG_EXISTS = "SELECT id FROM songs WHERE id = %s"
 SQL_GET_SONGS_PLAYLIST = "SELECT * FROM songs WHERE id IN (SELECT song_id FROM playlist_song WHERE playlist_id = %s)"
-SQL_CHECK_SONG_IS_ATTACHED = "SELECT * FROM playlist_song WHERE song_id = %s"
+SQL_GET_DETTACHED_SONGS = "SELECT * FROM songs WHERE id NOT IN (SELECT song_id FROM playlist_song)"
 SQL_INSERT_PLAYLIST = "INSERT INTO playlists (id, title) VALUES (%s, %s)"
 SQL_INSERT_MUSIC = "INSERT INTO songs (id, title) VALUES (%s, %s)"
 SQL_ATTACH_SONG_PLAYLIST = "INSERT INTO playlist_song (playlist_id, song_id) VALUES (%s, %s)"
@@ -91,9 +91,14 @@ class DBManager():
         self.cursor.execute(SQL_ATTACH_SONG_PLAYLIST, (playlist.id, song.id))
         self.connection.commit()
 
-    def is_song_attached_to_some_playlist(self, song):
-        self.cursor.execute(SQL_CHECK_SONG_IS_ATTACHED, (song.id,))
-        return self.cursor.fetchone() is not None
+    def get_dettached_songs(self):
+        self.cursor.execute(SQL_GET_DETTACHED_SONGS)
+        rows = self.cursor.fetchall()
+        songs = []
+        for row in rows:
+            songs.append(Song(*row))
+
+        return songs
 
     def deattach_playlist_song(self, song, playlist):
         self.cursor.execute(SQL_DEATTACH_SONG_PLAYLIST, (playlist.id, song.id))
