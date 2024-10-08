@@ -1,8 +1,10 @@
 services:
-  27chart-tracker:
-    build: .
-    image: 27chart-tracker:latest
-    container_name: 27chart-tracker
+  27chart:
+    pull_policy: build
+    build:
+      context: .
+    image: 27chart:latest
+    container_name: 27chart
     environment:
       - TWITTER_ACCESS_TOKEN=$TWITTER_ACCESS_TOKEN
       - TWITTER_ACCESS_TOKEN_SECRECT=$TWITTER_ACCESS_TOKEN_SECRECT
