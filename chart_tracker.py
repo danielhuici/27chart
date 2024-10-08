@@ -88,16 +88,15 @@ class ChartTracker():
     def track_playlist_changes(self):
         playlists = self.db_manager.get_playlists()
         for db_playlist in playlists:
-            self.logger.info(f"Scanning playlist {db_playlist.title}...")
             current_db_playlist_songs = self.db_manager.get_songs_playlist(db_playlist.id)
-            current_youtube_playlist_songs = self.youtube_scrapper.get_available_playlist_videos(db_playlist.id)
-            if (len(current_youtube_playlist_songs) > 0): # In case YT returns empty playlist due to error, it won't wipe database
+            success, current_youtube_playlist_songs = self.youtube_scrapper.get_available_playlist_videos(db_playlist.id)
+            if success:
                 added_songs, retired_songs, unavailable_songs = self.find_playlist_changes(current_db_playlist_songs, current_youtube_playlist_songs)
                 self.handle_unavailable_songs(unavailable_songs)
-                self.logger.info(f"Retired songs: {len(retired_songs)} ---- New songs: {len(added_songs)} --- Unavailable songs: {len(unavailable_songs)}")
+                self.logger.info(f"[{db_playlist.title}] Retired songs: {len(retired_songs)} | New songs: {len(added_songs)} | Unavailable songs: {len(unavailable_songs)}")
                 self.handle_playlist_changes(db_playlist, retired_songs, added_songs, db_playlist.twitter_alert)
             else:
-                self.logger.warning(f"YouTube returned an empty playlist ({db_playlist})")
+                self.logger.warning(f"Something worng happend while scrapping YouTube playlist ({db_playlist}). We'll try again later...")
         self.clean_dettached_songs()
 
     def backup_db(self):
