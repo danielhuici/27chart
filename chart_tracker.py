@@ -9,7 +9,7 @@ import logging
 
 SETTINGS_PATH = f"{os.getenv('CREDENTIALS_PATH')}/settings.yaml"
 YOUTUBE_PLAYLIST_BASEURL = "https://www.youtube.com/playlist?list="
-DOWNLOADED_YOUTUBE_SONG_EXTENSION = ".mp3"
+SONG_FILE_EXTENSION = ".mp3"
 
 YT_DLP_OPTS = {'username': 'oauth2',
             'password': '',
@@ -48,16 +48,18 @@ class ChartTracker():
     def backup_songs(self):
         unsaved_songs = self._find_unsaved_songs()
         for song in unsaved_songs:
-            self.logger.info(f"Downloading song {song.title}")
-            self.youtube_downloader.download_song(song)
-            filename = self._find_song_file()
-            self.db_manager.set_filename(song.id, filename)
-            self.gdrive_manager.upload_file(filename)
-            os.remove(filename)
-
+            song_filename = self.gdrive_manager.is_file_present(song.id)
+            if not song_filename: # Song is not in Google Drive, download it then!
+                self.logger.info(f"Downloading song {song.title}")
+                self.youtube_downloader.download_song(song)
+                song_filename = self._find_song_file()
+                self.gdrive_manager.upload_file(song_filename)
+                os.remove(song_filename)
+            self.db_manager.set_song_filename(song.id, song_filename)
+            
     def _find_song_file(self):
         for file in os.listdir("."):
-            if file.endswith(DOWNLOADED_YOUTUBE_SONG_EXTENSION):
+            if file.endswith(SONG_FILE_EXTENSION):
                 return file
 
     def _find_unsaved_songs(self):

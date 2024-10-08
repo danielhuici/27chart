@@ -20,6 +20,13 @@ class GoogleDriveManager():
         
         return file_titles
 
+    def is_file_present(self, song_id):
+        all_files = self.get_all_file_titles()
+        for file in all_files:
+            if song_id in all_files:
+                return file
+        return None
+
     def upload_file(self, filename):
         if not debug_mode():
             file = self.drive.CreateFile({'parents': [{'id': self.songs_folder_id}]})
