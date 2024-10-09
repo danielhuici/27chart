@@ -99,7 +99,7 @@ class YoutubeScrapper():
                     return True, songs
                 self.logger.warning(f"Big inconsistency while scrapping playlist {playlist_id} (Actual videos: {actual_n_videos} Retrieved videos: {len(video_elements)})")
                 return False, []
-
+            
         except (TimeoutException, NoSuchElementException) as e:
             self.logger.warning(f"Error while scraping playlist {playlist_id}: {e}")
             return False, []

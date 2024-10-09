@@ -109,7 +109,7 @@ class DBManager():
         self.cursor.execute(SQL_DELETE_SONG, (song.id,))
         self.connection.commit()
 
-    def set_filename(self, song_id, filename):
+    def set_song_filename(self, song_id, filename):
         self.cursor.execute(SQL_SET_SONG_FILENAME, (filename, song_id))
         self.connection.commit()
 

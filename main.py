@@ -27,6 +27,7 @@ if __name__ == "__main__":
     schedule.every().hour.do(chart_tracker.backup_songs)
     schedule.every().day.do(chart_tracker.backup_db)
     schedule.every().hour.do(chart_tracker.track_playlist_changes)
+
     
     
     schedule.run_all() # Run everything on the beginning

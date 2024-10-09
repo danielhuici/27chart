@@ -56,7 +56,7 @@ class ChartTracker():
                 self.gdrive_manager.upload_file(song_filename)
                 os.remove(song_filename)
             self.db_manager.set_song_filename(song.id, song_filename)
-            
+
     def _find_song_file(self):
         for file in os.listdir("."):
             if file.endswith(SONG_FILE_EXTENSION):
