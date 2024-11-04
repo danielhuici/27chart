@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from urllib.parse import urlparse, parse_qs
 import time
 from contextlib import contextmanager
@@ -107,7 +107,7 @@ class YoutubeScrapper():
                 self.logger.warning(f"Big inconsistency while scrapping playlist {playlist_id} (Actual videos: {actual_n_videos} Retrieved videos: {len(video_elements)})")
                 return False, []
             
-        except (TimeoutException, NoSuchElementException) as e:
-            self.logger.warning(f"Error while scraping playlist {playlist_id}: {e}")
+        except Exception as e:
+            self.logger.warning(f"Error while scraping playlist {playlist_id}: {e}. We will try later...")
             return False, []
     
