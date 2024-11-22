@@ -9,11 +9,11 @@ class YoutubeDownloader():
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.ydlp_opts = {
-            'username': 'oauth2',
-            'password': '',
             'quiet': True,
             'no_warnings': True,
-            'cachedir': os.getenv('YTDLP_CACHE_DIR')}
+            'verbose' : True,
+            'cookies': os.getenv('YTDLP_COOKIES')
+        }
 
     def download_song(self, song):
         ydl_opts =  self.ydlp_opts | {
@@ -35,8 +35,10 @@ class YoutubeDownloader():
             try: 
                 with YoutubeDL(ydl_opts) as ydl:
                     ydl.download(YOUTUBE_VIDEO_BASEURL + song.id)
+                    return True
             except DownloadError:
                 self.logger.error(f"Can't download song {song}") 
+                return False
 
     def check_video_availability(self, song):
         ydl_opts =  self.ydlp_opts | {

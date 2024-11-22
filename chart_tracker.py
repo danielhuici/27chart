@@ -51,11 +51,14 @@ class ChartTracker():
             song_filename = self.gdrive_manager.is_file_present(song.id)
             if not song_filename: # Song is not in Google Drive, download it then!
                 self.logger.info(f"Downloading song {song.title}")
-                self.youtube_downloader.download_song(song)
-                song_filename = self._find_song_file()
-                self.gdrive_manager.upload_file(song_filename)
-                os.remove(song_filename)
-            self.db_manager.set_song_filename(song.id, song_filename)
+                download_success = self.youtube_downloader.download_song(song)
+                if download_success:
+                    song_filename = self._find_song_file()
+                    self.gdrive_manager.upload_file(song_filename)
+                    os.remove(song_filename)
+                    self.db_manager.set_song_filename(song.id, song_filename)
+            else:
+                self.db_manager.set_song_filename(song.id, song_filename)
 
     def _find_song_file(self):
         for file in os.listdir("."):
