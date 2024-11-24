@@ -11,7 +11,6 @@ class YoutubeDownloader():
         self.ydlp_opts = {
             'quiet': True,
             'no_warnings': True,
-            'verbose' : True,
             'cookies': os.getenv('YTDLP_COOKIES')
         }
 
