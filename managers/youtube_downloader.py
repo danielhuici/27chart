@@ -9,9 +9,8 @@ class YoutubeDownloader():
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.ydlp_opts = {
-            'quiet': True,
-            'no_warnings': True,
-            'cookies': os.getenv('YTDLP_COOKIES')
+            'quiet': False,
+            'no_warnings': False,
         }
 
     def download_song(self, song):
