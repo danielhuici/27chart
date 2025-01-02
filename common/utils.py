@@ -12,9 +12,15 @@ def configure_logger():
 
         # Configure the console logger
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(logging.Formatter('%(levelname)s [%(asctime)s] %(name)s [%(filename)s:%(lineno)d] - %(message)s'))
+        if debug_mode():
+            console_handler.setLevel(logging.DEBUG)
+            console_handler.setFormatter(logging.Formatter('%(levelname)s [%(asctime)s] %(name)s [%(filename)s:%(lineno)d] - %(message)s'))
 
+        else:
+            console_handler.setLevel(logging.INFO)
+            console_handler.setFormatter(logging.Formatter('%(levelname)s [%(asctime)s] %(name)s - %(message)s'))
+
+        
         # Configure the file logger
         file_handler = RotatingFileHandler('monitor.log', maxBytes=10e6)
         file_handler.setLevel(logging.DEBUG)

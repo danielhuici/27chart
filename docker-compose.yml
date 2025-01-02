@@ -1,6 +1,7 @@
 services:
   27chart:
     pull_policy: build
+    network_mode: "host"
     build:
       context: .
     image: 27chart:latest
@@ -20,7 +21,6 @@ services:
       - GDRIVE_CREDENTIALS_PATH=$GDRIVE_CREDENTIALS_PATH
       - GDRIVE_SONGS_PATH=$GDRIVE_SONGS_PATH
       - GDRIVE_BACKUPS_PATH=$GDRIVE_BACKUPS_PATH
-      - YTDLP_COOKIES=$YTDLP_COOKIES
       - FALLBACK_PROXY_URL=$FALLBACK_PROXY_URL
       - SELENIUM_HOST=$SELENIUM_HOST
     volumes:

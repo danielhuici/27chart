@@ -4,7 +4,7 @@ from managers.twitter_manager import TwitterManager
 from managers.google_drive_manager import GoogleDriveManager
 from managers.youtube_scrapper import YoutubeScrapper
 from managers.youtube_downloader import YoutubeDownloader
-
+from datalayer.song import Song
 import logging
 
 SETTINGS_PATH = f"{os.getenv('CREDENTIALS_PATH')}/settings.yaml"

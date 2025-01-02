@@ -38,6 +38,7 @@ class YoutubeScrapper():
         driver_options.add_argument("--headless")
         driver = webdriver.Remote(f'http://{self.selenium_host}', options=driver_options)
         driver.maximize_window()
+        self.logger.debug("[SELENIUM] Connection success with host")
 
         try:
             yield driver
@@ -45,6 +46,7 @@ class YoutubeScrapper():
             driver.quit()
 
     def _get_actual_n_videos(self, driver):
+        self.logger.debug("[SELENIUM] Getting playlist length...")
         el = driver.find_element("tag name", "body")
         n_videos_text = re.search(r'\d+ videos', el.text).group()
         n_videos = n_videos_text.split(" ")[0]
@@ -52,7 +54,7 @@ class YoutubeScrapper():
 
     def _scraper_scroll_playlist(self, driver):
         last_height = driver.execute_script("return document.documentElement.scrollHeight")
-
+        self.logger.debug("[SELENIUM] Scrolling playlist...")
         try:
             while True:
                 driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
@@ -63,12 +65,14 @@ class YoutubeScrapper():
 
                 last_height = new_height
         except TimeoutException as e:
-            self.logger.warning(f"Timeout while scrolling playlist: {e}")
+            self.logger.warning(f"[SELENIUM] Timeout while scrolling playlist: {e}")
 
     def _accept_agreement(self, driver):
+        self.logger.debug("[SELENIUM] Accepting YouTube EULA...")
         accept_button = WebDriverWait(driver, self.timeout).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, "button[aria-label='Accept all']"))
                 )
+        
         accept_button.click()
 
     def _get_all_video_elements(self, driver):
@@ -79,9 +83,12 @@ class YoutubeScrapper():
         return video_elements
 
     def _check_consistency(self, actual_n_videos, retrived_n_videos):
-        return (actual_n_videos - retrived_n_videos) < ACCEPT_ERROR
+        consistency = actual_n_videos - retrived_n_videos
+        self.logger.debug(f"[SELENIUM] Checking playlist consistency: {consistency}")
+        return consistency < ACCEPT_ERROR
     
     def _obtain_song_list(self, video_elements):
+        self.logger.debug(f"[SELENIUM] Gathering all the songs...")
         songs = []
         for video_element in video_elements:
             video_url = video_element.get_attribute('href')
@@ -103,11 +110,12 @@ class YoutubeScrapper():
                 video_elements = self._get_all_video_elements(driver)
                 if self._check_consistency(actual_n_videos, len(video_elements)):
                     songs = self._obtain_song_list(video_elements)
+                    self.logger.debug(f"[SELENIUM] Success scrapping playlist {playlist_id}")
                     return True, songs
-                self.logger.warning(f"Big inconsistency while scrapping playlist {playlist_id} (Actual videos: {actual_n_videos} Retrieved videos: {len(video_elements)})")
+                self.logger.warning(f"[SELENIUM] Big inconsistency while scrapping playlist {playlist_id} (Actual videos: {actual_n_videos} Retrieved videos: {len(video_elements)})")
                 return False, []
             
         except Exception as e:
-            self.logger.warning(f"Error while scraping playlist {playlist_id}: {e}. We will try later...")
+            self.logger.warning(f"[SELENIUM] Error while scraping playlist {playlist_id}: {e}. We will try later...")
             return False, []
     

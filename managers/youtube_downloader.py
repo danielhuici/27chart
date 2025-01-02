@@ -2,6 +2,7 @@ from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 import os
 import logging
+from fp.fp import FreeProxy
 
 YOUTUBE_VIDEO_BASEURL = "https://www.youtube.com/watch?v="
 
@@ -11,6 +12,7 @@ class YoutubeDownloader():
         self.ydlp_opts = {
             'quiet': False,
             'no_warnings': False,
+            'proxy': os.getenv('FALLBACK_PROXY_URL'),
         }
 
     def download_song(self, song):
