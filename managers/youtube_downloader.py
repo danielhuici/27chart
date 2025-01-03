@@ -2,7 +2,6 @@ from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 import os
 import logging
-from fp.fp import FreeProxy
 
 YOUTUBE_VIDEO_BASEURL = "https://www.youtube.com/watch?v="
 
