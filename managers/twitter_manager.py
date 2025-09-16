@@ -17,7 +17,7 @@ TWEET_TEMPLATES = {
         "retired": "\U0001F51D \U0000274C SALIDA DE #KifixoTopEverMusic \n {} \n youtu.be/{}"
     },
     "Kifixo Grand Reserva": {
-        "added": "\U00002B50 Congratulations \U00002B50 \n ENTRADA A #KifixoGrandReserva Y CANDIDATA A #KifixoSong2025 \n {} \n youtu.be/{}",
+        "added": "\U00002B50 Congratulations \U00002B50 \n ENTRADA A #KifixoGrandReserva Y CANDIDATA A #KifixoSong2026 \n {} \n youtu.be/{}",
         "retired": "\U0001F7E1 THANK YOU \U0001F7E1 \n Salida #KifixoGrandReserva y revelada para Kifixo 27 Chart \n {} \n youtu.be/{}"
     },
     "Song Unavailable": "\U00002757 Una canción ya no está disponible @kifixo23 \U00002757 \n Lista: {} \n Canción: {} \n youtu.be/{}\n"
@@ -96,11 +96,13 @@ class TwitterManager:
 
     def _create_tweet_text(self, playlist_title: str, song: Song, status_added: bool) -> str:
         tweets_templates = TWEET_TEMPLATES.get(playlist_title, {})
-        status_key = "added" if status_added else "retired"
-        
-        tweet_template = tweets_templates.get(status_key)
-        if not tweet_template:
-            raise KeyError(f"No template found for {playlist_title} - {status_key}")
-        
-        return tweet_template.format(song.title, song.id)
+        added_song_tweet = tweets_templates.get("added", "").format(song.title, song.id)
+        retired_song_tweet = tweets_templates.get("retired", "").format(song.title, song.id)
 
+        return added_song_tweet, retired_song_tweet
+
+if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()
+    manager = TwitterManager()
+    manager.post_song_status_change_tweet("Test")
