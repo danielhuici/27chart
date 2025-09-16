@@ -76,12 +76,12 @@ class DBManager():
 
     def insert_playlist(self, id, title, twitter_alert):
         self.cursor.execute(SQL_INSERT_PLAYLIST, (id, title, twitter_alert))
-        self.connection.commit()
+        self.commit()
         
     def insert_song(self, song): 
         tuple = (song.id, song.title)
         self.cursor.execute(SQL_INSERT_MUSIC, tuple),
-        self.connection.commit()
+        self.commit()
 
     # Will insert the song. If it already exists on the DB, it will just attach the song to the playlist.
     def insert_video_playlist(self, song, playlist): 
@@ -89,7 +89,7 @@ class DBManager():
             self.insert_song(song)
 
         self.cursor.execute(SQL_ATTACH_SONG_PLAYLIST, (playlist.id, song.id))
-        self.connection.commit()
+        self.commit()
 
     def get_dettached_songs(self):
         self.cursor.execute(SQL_GET_DETTACHED_SONGS)
@@ -102,20 +102,24 @@ class DBManager():
 
     def deattach_playlist_song(self, song, playlist):
         self.cursor.execute(SQL_DEATTACH_SONG_PLAYLIST, (playlist.id, song.id))
-        self.connection.commit()
+        self.commit()
 
     def delete_song(self, song):
         self.cursor.execute(SQL_DEATTACH_SONG_ALL_PLAYLIST, (song.id,))
         self.cursor.execute(SQL_DELETE_SONG, (song.id,))
-        self.connection.commit()
+        self.commit()
 
     def set_song_filename(self, song_id, filename):
         self.cursor.execute(SQL_SET_SONG_FILENAME, (filename, song_id))
-        self.connection.commit()
+        self.commit()
 
     def set_song_title(self, song_id, title):
         self.cursor.execute(SQL_SET_SONG_TITLE, (title, song_id))
-        self.connection.commit()
+        self.commit()
+
+    def commit(self):
+        if not debug_mode():
+            self.connection.commit()
 
     def generate_sql_backup(self):
         filename = f"27chart{date.today()}.sql"
@@ -124,6 +128,5 @@ class DBManager():
                    "-f", filename]
         
         subprocess.run(command)   
-         
         return filename
 

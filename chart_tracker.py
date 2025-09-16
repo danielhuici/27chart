@@ -40,26 +40,32 @@ class ChartTracker():
 
         return added_youtube_songs, removed_youtube_songs, unavailable_songs
 
-    def handle_unavailable_songs(self, unavailable_songs):
+    def handle_unavailable_songs(self, playlist, unavailable_songs):
         for song in unavailable_songs:
-            if self.twitterManager.post_song_status_unavailable_tweet(song):
+            if self.twitterManager.post_song_unavailable_tweet(playlist.title, song):
                 self.db_manager.delete_song(song)
 
     def backup_songs(self):
         unsaved_songs = self._find_unsaved_songs()
         for song in unsaved_songs:
-            song_filename = self.gdrive_manager.is_file_present(song.id)
-            if not song_filename: # Song is not in Google Drive, download it then!
-                self.logger.info(f"Downloading song {song.title}")
-                download_success = self.youtube_downloader.download_song(song)
-                if not download_success:
-                    continue
-                song_filename = self._find_song_file()
-                self.gdrive_manager.upload_file(song_filename)
-                os.remove(song_filename)
-                self.db_manager.set_song_filename(song.id, song_filename)
+            song_filename = self.gdrive_manager.search_filename(song.id)
+            self.logger.info(f"Verifying song \"{song.title}\" to download...")
 
-    def _find_song_file(self):
+            if not song_filename: # Song is not in Google Drive, download it then!
+                self.logger.info(f"Song \"{song.title}\" not present! Downloading...")
+                download_success = self.youtube_downloader.download_song(song)
+                self.logger.debug(f"\"{song.title}\" downloaded successfully!")
+                if download_success:
+                    song_filename = self._find_local_downloaded_song()
+                    self.gdrive_manager.upload_file(song_filename)
+                    os.remove(song_filename)
+                    self.logger.debug(f"Removing {song_filename}")
+
+            if song_filename:        
+                self.db_manager.set_song_filename(song.id, song_filename)
+                    
+
+    def _find_local_downloaded_song(self):
         for file in os.listdir("."):
             if file.endswith(SONG_FILE_EXTENSION):
                 return file
@@ -96,7 +102,7 @@ class ChartTracker():
             success, current_youtube_playlist_songs = self.youtube_scrapper.get_available_playlist_videos(db_playlist.id)
             if success:
                 added_songs, retired_songs, unavailable_songs = self.find_playlist_changes(current_db_playlist_songs, current_youtube_playlist_songs)
-                self.handle_unavailable_songs(unavailable_songs)
+                self.handle_unavailable_songs(db_playlist, unavailable_songs)
                 self.logger.info(f"[{db_playlist.title}] Retired songs: {len(retired_songs)} | New songs: {len(added_songs)} | Unavailable songs: {len(unavailable_songs)}")
                 self.handle_playlist_changes(db_playlist, retired_songs, added_songs, db_playlist.twitter_alert)
             else:
@@ -107,3 +113,4 @@ class ChartTracker():
         filename = self.db_manager.generate_sql_backup()
         self.gdrive_manager.upload_backup(filename)
         os.remove(filename)
+        self.logger.warning(f"Backup \"{filename}\" uploaded successfully")

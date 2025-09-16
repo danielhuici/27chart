@@ -9,6 +9,7 @@ def configure_logger():
         logging.getLogger("httpx").setLevel(logging.WARNING)
         logging.getLogger("httpcore").setLevel(logging.WARNING)
         logging.getLogger("selenium").setLevel(logging.CRITICAL)
+        logging.getLogger("googleapiclient.discovery").setLevel(logging.WARNING)
 
         # Configure the console logger
         console_handler = logging.StreamHandler()

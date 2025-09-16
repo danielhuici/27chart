@@ -12,19 +12,18 @@ class GoogleDriveManager():
         self.db_backups_folder_id = os.getenv('GDRIVE_BACKUPS_PATH')
         self.drive = GoogleDrive(gauth)
 
-    def get_all_file_titles(self):
-        file_titles = []
+    def get_all_files(self):
+        files = []
         files = self.drive.ListFile({'q': f"'{self.songs_folder_id}' in parents and trashed=false"}).GetList()
-        for file in files:
-            file_titles.append(file['title'])
         
-        return file_titles
+        return files
 
-    def is_file_present(self, song_id):
-        all_files = self.get_all_file_titles()
+    def search_filename(self, song_id):
+        all_files = self.get_all_files()
         for file in all_files:
-            if song_id in all_files:
-                return file
+            filename = file['title']
+            if song_id in filename:
+                return file['title']
         return None
 
     def upload_file(self, filename):
@@ -38,5 +37,4 @@ class GoogleDriveManager():
             file = self.drive.CreateFile({'parents': [{'id': self.db_backups_folder_id}]})
             file.SetContentFile(filename)
             file.Upload()
-
-    
+            

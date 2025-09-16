@@ -11,6 +11,7 @@ from contextlib import contextmanager
 import logging
 import os
 import re
+import traceback
 
 from datalayer.song import Song
 
@@ -116,6 +117,8 @@ class YoutubeScrapper():
                 return False, []
             
         except Exception as e:
-            self.logger.warning(f"[SELENIUM] Error while scraping playlist {playlist_id}: {e}. We will try later...")
+            error_details = traceback.format_exc()  
+            self.logger.warning(f"[SELENIUM] Error while scraping playlist {playlist_id}: {e}. We will try later...\n"
+                                f"Traceback: {error_details}")
             return False, []
     
