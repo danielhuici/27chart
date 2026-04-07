@@ -65,11 +65,8 @@ class TelegramManager:
         try:
             response = requests.post(url, json=payload)
             response.raise_for_status()
-            self.logger.info(f"Telegram message sent successfully!")
             return True
-        except requests.exceptions.HTTPError as e:
-            self.logger.error(f"Telegram message sending failed: {text}\nError: {e}\nResponse: {response.text}")
-            return False
+
         except Exception as e:
             self.logger.error(f"Telegram message sending failed: {text}\nError: {e}")
             return False
