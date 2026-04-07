@@ -79,15 +79,15 @@ class ChartTracker():
 
         return unsaved_songs 
 
-    def handle_playlist_changes(self, playlist, retired_songs, added_songs, twitter_alert=False):
+    def handle_playlist_changes(self, playlist, retired_songs, added_songs, notify=False):
         for song in added_songs:
             self.db_manager.insert_video_playlist(song, playlist)
-            if twitter_alert: 
+            if notify: 
                 self.telegram_manager.post_song_status_change(playlist.title, song, status_added=True)
 
         for song in retired_songs: 
             self.db_manager.deattach_playlist_song(song, playlist)
-            if twitter_alert: 
+            if notify: 
                 self.telegram_manager.post_song_status_change(playlist.title, song, status_added=False)
 
     def clean_dettached_songs(self):
@@ -104,7 +104,7 @@ class ChartTracker():
                 added_songs, retired_songs, unavailable_songs = self.find_playlist_changes(current_db_playlist_songs, current_youtube_playlist_songs)
                 self.handle_unavailable_songs(db_playlist, unavailable_songs)
                 self.logger.info(f"[{db_playlist.title}] Retired songs: {len(retired_songs)} | New songs: {len(added_songs)} | Unavailable songs: {len(unavailable_songs)}")
-                self.handle_playlist_changes(db_playlist, retired_songs, added_songs, db_playlist.twitter_alert)
+                self.handle_playlist_changes(db_playlist, retired_songs, added_songs, db_playlist.notify)
             else:
                 self.logger.warning(f"Something worng happend while scrapping YouTube playlist ({db_playlist}). We'll try again later...")
         self.clean_dettached_songs()
