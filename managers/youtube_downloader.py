@@ -14,7 +14,6 @@ class YoutubeDownloader():
             'quiet': False,
             'no_warnings': False,
             'proxy': os.getenv('FALLBACK_PROXY_URL'),
-            
             #'proxy': 'socks5://gc.huici.es:25288'
         }
 

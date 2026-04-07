@@ -1,6 +1,6 @@
 import os
 from managers.db_manager import DBManager
-from managers.twitter_manager import TwitterManager
+from managers.telegram_manager import TelegramManager
 from managers.google_drive_manager import GoogleDriveManager
 from managers.youtube_scrapper import YoutubeScrapper
 from managers.youtube_downloader import YoutubeDownloader
@@ -19,7 +19,7 @@ YT_DLP_OPTS = {'username': 'oauth2',
 class ChartTracker():
     def __init__(self, db_manager : DBManager, gdrive_manager: GoogleDriveManager):
         self.db_manager = db_manager
-        self.twitterManager = TwitterManager()
+        self.telegram_manager = TelegramManager()
         self.gdrive_manager = gdrive_manager
         self.youtube_scrapper = YoutubeScrapper()
         self.youtube_downloader = YoutubeDownloader()
@@ -42,7 +42,7 @@ class ChartTracker():
 
     def handle_unavailable_songs(self, playlist, unavailable_songs):
         for song in unavailable_songs:
-            if self.twitterManager.post_song_unavailable_tweet(playlist.title, song):
+            if self.telegram_manager.post_song_unavailable(playlist.title, song):
                 self.db_manager.delete_song(song)
 
     def backup_songs(self):
@@ -83,12 +83,12 @@ class ChartTracker():
         for song in added_songs:
             self.db_manager.insert_video_playlist(song, playlist)
             if twitter_alert: 
-                self.twitterManager.post_song_status_change_tweet(playlist.title, song, status_added=True)
+                self.telegram_manager.post_song_status_change(playlist.title, song, status_added=True)
 
         for song in retired_songs: 
             self.db_manager.deattach_playlist_song(song, playlist)
             if twitter_alert: 
-                self.twitterManager.post_song_status_change_tweet(playlist.title, song, status_added=False)
+                self.telegram_manager.post_song_status_change(playlist.title, song, status_added=False)
 
     def clean_dettached_songs(self):
         dettached_songs = self.db_manager.get_dettached_songs()

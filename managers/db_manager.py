@@ -74,8 +74,8 @@ class DBManager():
         self.cursor.execute(SQL_CHECK_SONG_EXISTS, (song.id,))
         return self.cursor.fetchone() is not None
 
-    def insert_playlist(self, id, title, twitter_alert):
-        self.cursor.execute(SQL_INSERT_PLAYLIST, (id, title, twitter_alert))
+    def insert_playlist(self, id, title, notify):
+        self.cursor.execute(SQL_INSERT_PLAYLIST, (id, title, notify))
         self.commit()
         
     def insert_song(self, song): 

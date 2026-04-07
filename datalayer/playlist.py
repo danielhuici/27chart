@@ -1,9 +1,9 @@
 
 class Playlist():
-    def __init__(self, id, title, twitter_alert):
+    def __init__(self, id, title, notify):
         self.id = id
         self.title = title
-        self.twitter_alert = twitter_alert
+        self.notify = notify
         self.songs = []
     
     def add_song(self, song):
@@ -11,3 +11,6 @@ class Playlist():
 
     def __eq__(self, id):
         return self.id == id
+
+    def __str__(self):
+        return f"{self.id} - {self.title}"

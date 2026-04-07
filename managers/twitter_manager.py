@@ -1,11 +1,13 @@
 import os
 import logging
-from typing import Optional, Tuple, Dict
+from typing import Optional
 import tweepy
 from dotenv import load_dotenv
 
 from datalayer.song import Song
 from common.utils import debug_mode
+
+# Will be deprecated
 
 TWEET_TEMPLATES = {
     "Kifixo 27 Chart": {
@@ -96,13 +98,12 @@ class TwitterManager:
 
     def _create_tweet_text(self, playlist_title: str, song: Song, status_added: bool) -> str:
         tweets_templates = TWEET_TEMPLATES.get(playlist_title, {})
-        added_song_tweet = tweets_templates.get("added", "").format(song.title, song.id)
-        retired_song_tweet = tweets_templates.get("retired", "").format(song.title, song.id)
-
-        return added_song_tweet, retired_song_tweet
+        if status_added:
+            return tweets_templates.get("added", "").format(song.title, song.id)
+        return tweets_templates.get("retired", "").format(song.title, song.id)
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
     manager = TwitterManager()
-    manager.post_song_status_change_tweet("Test")
+    manager._post("Test")
